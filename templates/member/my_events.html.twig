@@ -1,64 +1,87 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Evenements - Les Eternels{% endblock %}
+{% block title %}Mes Inscriptions — Mon Espace{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
+
+<div style="padding:2.5rem 0 4rem;min-height:calc(100vh - 74px);">
+    <div class="container">
+
+        {# Header #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
             <div>
-                <h2 class="fw-bold"><i class="fas fa-calendar-check me-2 text-danger"></i>Mes Inscriptions</h2>
-                <p class="text-muted">Historique de vos participations aux evenements</p>
+                <p class="section-label mb-1">Espace membre</p>
+                <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.8rem;margin-bottom:.25rem;">
+                    Mes <span style="color:var(--accent);">Inscriptions</span>
+                </h2>
+                <p class="small mb-0" style="color:var(--text-muted);">Historique de vos participations aux événements</p>
             </div>
-            <a href="{{ path('app_member_events') }}" class="btn btn-outline-danger">
-                <i class="fas fa-plus me-1"></i>Voir les evenements
+            <a href="{{ path('app_member_events') }}" class="btn btn-accent">
+                <i class="fas fa-calendar-days me-2"></i>Voir les événements
             </a>
         </div>
-    </div>
 
-    {% if participations is empty %}
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle me-2"></i>Vous n'etes inscrit a aucun evenement.
-            <a href="{{ path('app_member_events') }}" class="alert-link">Voir les evenements disponibles</a>
-        </div>
-    {% else %}
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-0">
+        {% if participations is empty %}
+            <div class="card-dark text-center py-5">
+                <i class="fas fa-calendar-xmark fa-3x mb-3 d-block" style="color:var(--accent);opacity:.5;"></i>
+                <p style="color:var(--text-muted);margin-bottom:1.5rem;">Vous n'êtes inscrit à aucun événement pour le moment.</p>
+                <a href="{{ path('app_member_events') }}" class="btn btn-accent px-4">
+                    <i class="fas fa-calendar-days me-2"></i>Découvrir les événements
+                </a>
+            </div>
+        {% else %}
+
+            {# Desktop table #}
+            <div class="card-dark d-none d-md-block" style="overflow:hidden;">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Evenement</th>
-                                <th>Date evenement</th>
-                                <th>Inscrit le</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
+                    <table style="width:100%;border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:var(--bg-surface);border-bottom:1px solid var(--border);">
+                                {% for col in ['Événement', 'Date de l\'événement', 'Inscrit le', 'Statut', 'Actions'] %}
+                                    <th style="padding:.85rem 1.25rem;text-align:left;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);">
+                                        {{ col }}
+                                    </th>
+                                {% endfor %}
                             </tr>
                         </thead>
                         <tbody>
                             {% for participation in participations %}
-                                <tr>
-                                    <td>
-                                        <strong>{{ participation.event.title }}</strong>
+                                <tr style="border-bottom:1px solid var(--border);transition:background .15s;"
+                                    onmouseover="this.style.background='var(--bg-surface)'" onmouseout="this.style.background=''">
+                                    <td style="padding:1rem 1.25rem;">
+                                        <div style="font-weight:600;color:var(--text-primary);margin-bottom:.2rem;">
+                                            {{ participation.event.title }}
+                                        </div>
                                         {% if participation.event.location %}
-                                            <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ participation.event.location }}</small>
+                                            <div class="small" style="color:var(--text-muted);">
+                                                <i class="fas fa-location-dot me-1"></i>{{ participation.event.location|slice(0,40) }}
+                                            </div>
                                         {% endif %}
                                     </td>
-                                    <td>{{ participation.event.startDate|date('d/m/Y H:i') }}</td>
-                                    <td>{{ participation.registeredAt|date('d/m/Y') }}</td>
-                                    <td>
-                                        <span class="badge {{ participation.status == 'registered' ? 'bg-primary' : (participation.status == 'confirmed' ? 'bg-success' : (participation.status == 'attended' ? 'bg-info' : 'bg-danger')) }}">
-                                            {{ participation.status == 'registered' ? 'Inscrit' : (participation.status == 'confirmed' ? 'Confirme' : (participation.status == 'attended' ? 'Participe' : 'Annule')) }}
+                                    <td style="padding:1rem 1.25rem;color:var(--text-muted);font-size:.9rem;white-space:nowrap;">
+                                        {{ participation.event.startDate|date('d/m/Y H:i') }}
+                                    </td>
+                                    <td style="padding:1rem 1.25rem;color:var(--text-muted);font-size:.9rem;white-space:nowrap;">
+                                        {{ participation.registeredAt|date('d/m/Y') }}
+                                    </td>
+                                    <td style="padding:1rem 1.25rem;">
+                                        {% set statusMap = {registered:'Inscrit', confirmed:'Confirmé', attended:'Participé', cancelled:'Annulé'} %}
+                                        {% set statusBadge = {registered:'badge-info', confirmed:'badge-success', attended:'badge-surface', cancelled:'badge-danger'} %}
+                                        <span class="badge {{ statusBadge[participation.status] ?? 'badge-surface' }}">
+                                            {{ statusMap[participation.status] ?? participation.status }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td style="padding:1rem 1.25rem;">
                                         {% if participation.status != 'cancelled' and participation.event.startDate > date() %}
                                             <form method="post" action="{{ path('app_member_event_cancel', {id: participation.event.id}) }}" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Annuler cette inscription ?')">
+                                                <button type="submit" class="btn btn-sm fw-semibold"
+                                                        style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:#f87171;padding:.3rem .75rem;border-radius:7px;"
+                                                        onclick="return confirm('Annuler cette inscription ?')">
                                                     <i class="fas fa-times me-1"></i>Annuler
                                                 </button>
                                             </form>
+                                        {% else %}
+                                            <span class="small" style="color:var(--text-muted);">—</span>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -67,7 +90,42 @@
                     </table>
                 </div>
             </div>
-        </div>
-    {% endif %}
+
+            {# Mobile cards #}
+            <div class="d-flex d-md-none flex-column gap-3">
+                {% for participation in participations %}
+                    <div class="card-dark p-4">
+                        {% set statusMap = {registered:'Inscrit', confirmed:'Confirmé', attended:'Participé', cancelled:'Annulé'} %}
+                        {% set statusBadge = {registered:'badge-info', confirmed:'badge-success', attended:'badge-surface', cancelled:'badge-danger'} %}
+
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div style="font-weight:600;color:var(--text-primary);">{{ participation.event.title }}</div>
+                            <span class="badge {{ statusBadge[participation.status] ?? 'badge-surface' }} ms-2 flex-shrink-0">
+                                {{ statusMap[participation.status] ?? participation.status }}
+                            </span>
+                        </div>
+                        <div class="small d-flex flex-column gap-1 mb-3" style="color:var(--text-muted);">
+                            <span><i class="fas fa-calendar me-1"></i>{{ participation.event.startDate|date('d/m/Y H:i') }}</span>
+                            <span><i class="fas fa-user-clock me-1"></i>Inscrit le {{ participation.registeredAt|date('d/m/Y') }}</span>
+                            {% if participation.event.location %}
+                                <span><i class="fas fa-location-dot me-1"></i>{{ participation.event.location }}</span>
+                            {% endif %}
+                        </div>
+                        {% if participation.status != 'cancelled' and participation.event.startDate > date() %}
+                            <form method="post" action="{{ path('app_member_event_cancel', {id: participation.event.id}) }}">
+                                <button type="submit" class="btn btn-sm w-100"
+                                        style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:#f87171;"
+                                        onclick="return confirm('Annuler cette inscription ?')">
+                                    <i class="fas fa-times me-1"></i>Annuler l'inscription
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% endif %}
+    </div>
 </div>
+
 {% endblock %}

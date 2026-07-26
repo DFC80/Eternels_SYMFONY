@@ -1,54 +1,80 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Activites - Les Eternels{% endblock %}
+{% block title %}Activités — Les Éternels{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold"><i class="fas fa-gamepad me-2 text-danger"></i>Nos Activites</h1>
-        <p class="text-muted lead">Decouvrez toutes les activites de l'association</p>
-    </div>
 
-    {% if activities is empty %}
-        <div class="alert alert-info text-center">Aucune activite disponible pour le moment.</div>
-    {% else %}
-        <div class="row g-4">
-            {% for activity in activities %}
-                <div class="col-md-4 col-sm-6">
-                    <div class="card border-0 shadow-sm h-100 card-hover">
-                        <div class="card-body text-center p-4">
-                            <div class="mb-3">
-                                {% if activity.type == 'airsoft' %}
-                                    <i class="fas fa-crosshairs fa-3x text-danger"></i>
-                                {% elseif activity.type == 'board_game' %}
-                                    <i class="fas fa-chess fa-3x text-danger"></i>
-                                {% elseif activity.type == 'video_game' %}
-                                    <i class="fas fa-gamepad fa-3x text-danger"></i>
-                                {% elseif activity.type == 'card_game' %}
-                                    <i class="fas fa-layer-group fa-3x text-danger"></i>
-                                {% else %}
-                                    <i class="fas fa-star fa-3x text-danger"></i>
-                                {% endif %}
-                            </div>
-                            <h5 class="fw-bold">{{ activity.name }}</h5>
-                            <span class="badge bg-secondary mb-2">{{ activity.type|replace({'_': ' '}) }}</span>
-                            {% if activity.description %}
-                                <p class="text-muted small">{{ activity.description|slice(0, 120) }}{% if activity.description|length > 120 %}...{% endif %}</p>
-                            {% endif %}
-                            <div class="d-flex gap-2 justify-content-center flex-wrap">
-                                <span class="badge bg-light text-dark">{{ activity.games|length }} jeux</span>
-                                <span class="badge bg-light text-dark">{{ activity.events|length }} evenements</span>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-0 pb-3 text-center">
-                            <a href="{{ path('app_activity_show', {id: activity.id}) }}" class="btn btn-outline-danger btn-sm">
-                                Decouvrir
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+<div class="page-hero">
+    <div class="container text-center">
+        <span class="section-label mb-3 d-block">Ce que nous pratiquons</span>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:700;margin-bottom:1rem;">
+            Nos <span style="color:var(--accent);">Activités</span>
+        </h1>
+        <p style="color:var(--text-muted);font-size:1.05rem;max-width:480px;margin:0 auto;">
+            Découvrez toutes les activités de l'association et trouvez celle qui vous correspond.
+        </p>
+    </div>
 </div>
+
+<div style="padding:4rem 0;">
+    <div class="container">
+
+        {% set icons = {airsoft:'crosshairs', board_game:'chess', video_game:'gamepad', card_game:'layer-group', role_playing:'scroll'} %}
+        {% set typeLabels = {airsoft:'Airsoft', board_game:'Jeux de société', video_game:'Jeux vidéo', card_game:'Jeux de cartes', role_playing:'Jeu de rôle'} %}
+
+        {% if activities is empty %}
+            <div class="card-dark text-center py-5">
+                <i class="fas fa-gamepad fa-3x mb-3 d-block" style="color:var(--accent);opacity:.5;"></i>
+                <p style="color:var(--text-muted);margin:0;">Aucune activité disponible pour le moment.</p>
+            </div>
+        {% else %}
+            <div class="row g-4">
+                {% for activity in activities %}
+                    <div class="col-lg-4 col-md-6">
+                        <a href="{{ path('app_activity_show', {id: activity.id}) }}" class="text-decoration-none">
+                            <div class="card-dark h-100 p-4 d-flex flex-column" style="transition:transform .2s,box-shadow .2s;">
+                                <div class="d-flex align-items-start gap-3 mb-3">
+                                    <div class="activity-icon" style="flex-shrink:0;">
+                                        <i class="fas fa-{{ icons[activity.type] ?? 'star' }}"></i>
+                                    </div>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.2rem;color:var(--text-primary);margin-bottom:.3rem;">
+                                            {{ activity.name }}
+                                        </h5>
+                                        <span class="badge badge-surface">{{ typeLabels[activity.type] ?? activity.type|replace({'_':' '}) }}</span>
+                                    </div>
+                                </div>
+
+                                {% if activity.description %}
+                                    <p class="small mb-3" style="color:var(--text-muted);line-height:1.6;flex-grow:1;">
+                                        {{ activity.description|slice(0,140) }}{% if activity.description|length > 140 %}…{% endif %}
+                                    </p>
+                                {% else %}
+                                    <div class="flex-grow-1"></div>
+                                {% endif %}
+
+                                <div class="d-flex align-items-center justify-content-between mt-auto pt-3"
+                                     style="border-top:1px solid var(--border);">
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="badge badge-surface">
+                                            <i class="fas fa-dice me-1" style="color:var(--accent);"></i>{{ activity.games|length }} jeux
+                                        </span>
+                                        <span class="badge badge-surface">
+                                            <i class="fas fa-calendar me-1" style="color:var(--accent);"></i>{{ activity.events|length }} évén.
+                                        </span>
+                                    </div>
+                                    <span style="color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.03em;">
+                                        Découvrir <i class="fas fa-arrow-right ms-1"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
 {% endblock %}
