@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\EventParticipation;
+use App\Entity\Membership;
 use App\Form\ProfileFormType;
+use App\Repository\ActivityRepository;
 use App\Repository\ConsumptionRepository;
 use App\Repository\EventRepository;
 use App\Repository\MembershipRepository;
@@ -16,8 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Route('/member')]
 #[IsGranted('ROLE_USER')]
@@ -99,6 +99,77 @@ class MemberController extends AbstractController
 
         $this->addFlash('success', 'Mot de passe modifié avec succès.');
         return $this->redirectToRoute('app_member_profile');
+    }
+
+    #[Route('/memberships', name: 'app_member_memberships')]
+    public function memberships(
+        MembershipRepository $membershipRepo,
+        ActivityRepository $activityRepo
+    ): Response {
+        $user = $this->getUser();
+
+        return $this->render('member/memberships.html.twig', [
+            'memberships'        => $membershipRepo->findByMember($user),
+            'active_activity_ids' => $membershipRepo->findActiveActivityIds($user),
+            'activities'         => $activityRepo->findBy(['isActive' => true], ['name' => 'ASC']),
+        ]);
+    }
+
+    #[Route('/memberships/join/{activityId}', name: 'app_member_membership_join', methods: ['POST'])]
+    public function joinMembership(
+        int $activityId,
+        ActivityRepository $activityRepo,
+        MembershipRepository $membershipRepo,
+        EntityManagerInterface $em
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $activity = $activityRepo->find($activityId);
+
+        if (!$activity) {
+            $this->addFlash('error', 'Activité introuvable.');
+            return $this->redirectToRoute('app_member_memberships');
+        }
+
+        $existing = $membershipRepo->findOneBy(['member' => $user, 'activity' => $activity, 'status' => 'active']);
+        if ($existing) {
+            $this->addFlash('warning', 'Vous êtes déjà membre de cette activité.');
+            return $this->redirectToRoute('app_member_memberships');
+        }
+
+        $membership = new Membership();
+        $membership->setMember($user);
+        $membership->setActivity($activity);
+        $membership->setStartDate(new \DateTime());
+        $membership->setEndDate((new \DateTime())->modify('+1 year'));
+        $membership->setStatus('active');
+        $em->persist($membership);
+        $em->flush();
+
+        $this->addFlash('success', 'Vous avez rejoint l\'activité ' . $activity->getName() . ' !');
+        return $this->redirectToRoute('app_member_memberships');
+    }
+
+    #[Route('/memberships/{id}/cancel', name: 'app_member_membership_cancel', methods: ['POST'])]
+    public function cancelMembership(
+        int $id,
+        MembershipRepository $membershipRepo,
+        EntityManagerInterface $em
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $membership = $membershipRepo->find($id);
+
+        if (!$membership || $membership->getMember() !== $user) {
+            $this->addFlash('error', 'Adhésion introuvable.');
+            return $this->redirectToRoute('app_member_memberships');
+        }
+
+        $membership->setStatus('cancelled');
+        $em->flush();
+
+        $this->addFlash('success', 'Adhésion annulée.');
+        return $this->redirectToRoute('app_member_memberships');
     }
 
     #[Route('/events', name: 'app_member_events')]

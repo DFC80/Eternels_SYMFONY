@@ -25,6 +25,9 @@
                     <a href="{{ path('app_member_profile') }}" class="btn btn-outline-accent btn-sm">
                         <i class="fas fa-user-pen me-1"></i>Mon profil
                     </a>
+                    <a href="{{ path('app_member_memberships') }}" class="btn btn-outline-accent btn-sm">
+                        <i class="fas fa-id-card me-1"></i>Adhésions
+                    </a>
                     <a href="{{ path('app_member_my_events') }}" class="btn btn-outline-accent btn-sm">
                         <i class="fas fa-calendar-check me-1"></i>Mes événements
                     </a>
@@ -59,10 +62,11 @@
             {# Memberships #}
             <div class="col-md-6">
                 <div class="card-dark h-100">
-                    <div class="p-4" style="border-bottom:1px solid var(--border);">
+                    <div class="p-4 d-flex justify-content-between align-items-center" style="border-bottom:1px solid var(--border);">
                         <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin:0;color:var(--text-primary);">
                             <i class="fas fa-id-card me-2" style="color:var(--accent);"></i>Mes Adhésions
                         </h5>
+                        <a href="{{ path('app_member_memberships') }}" class="btn btn-outline-accent btn-sm">Gérer</a>
                     </div>
                     <div class="p-4">
                         {% if memberships is empty %}
@@ -196,9 +200,12 @@
         </div>
 
         {# Mobile quick links #}
-        <div class="d-flex d-md-none gap-2 mt-4">
+        <div class="d-flex d-md-none flex-wrap gap-2 mt-4">
             <a href="{{ path('app_member_profile') }}" class="btn btn-outline-accent flex-fill">
                 <i class="fas fa-user-pen me-1"></i>Mon profil
+            </a>
+            <a href="{{ path('app_member_memberships') }}" class="btn btn-outline-accent flex-fill">
+                <i class="fas fa-id-card me-1"></i>Adhésions
             </a>
             <a href="{{ path('app_member_my_events') }}" class="btn btn-outline-accent flex-fill">
                 <i class="fas fa-calendar-check me-1"></i>Mes inscriptions

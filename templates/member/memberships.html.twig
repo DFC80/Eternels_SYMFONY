@@ -1,0 +1,222 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Adhésions — Mon Espace{% endblock %}
+
+{% block body %}
+
+<div style="padding:2.5rem 0 4rem;min-height:calc(100vh - 74px);">
+    <div class="container">
+
+        {# Header #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+            <div>
+                <a href="{{ path('app_member_dashboard') }}"
+                   class="d-inline-flex align-items-center gap-2 small fw-semibold mb-2"
+                   style="color:var(--text-muted);text-decoration:none;transition:color .2s;"
+                   onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">
+                    <i class="fas fa-arrow-left"></i> Mon espace
+                </a>
+                <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.8rem;margin-bottom:.25rem;">
+                    Mes <span style="color:var(--accent);">Adhésions</span>
+                </h2>
+                <p class="small mb-0" style="color:var(--text-muted);">Gérez vos adhésions aux activités de l'association</p>
+            </div>
+        </div>
+
+        {# ── Current memberships ── #}
+        <div class="card-dark mb-4">
+            <div class="p-4" style="border-bottom:1px solid var(--border);">
+                <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin:0;color:var(--text-primary);">
+                    <i class="fas fa-id-card me-2" style="color:var(--accent);"></i>Adhésions en cours
+                    {% if memberships is not empty %}
+                        <span class="badge badge-surface ms-2" style="font-size:.75rem;font-family:'Inter',sans-serif;font-weight:600;">{{ memberships|length }}</span>
+                    {% endif %}
+                </h5>
+            </div>
+
+            {% if memberships is empty %}
+                <div class="p-5 text-center">
+                    <i class="fas fa-id-card fa-3x mb-3 d-block" style="color:var(--accent);opacity:.3;"></i>
+                    <p class="mb-1" style="color:var(--text-muted);">Vous n'avez encore aucune adhésion.</p>
+                    <p class="small mb-0" style="color:var(--text-muted);">Rejoignez une activité ci-dessous pour commencer.</p>
+                </div>
+            {% else %}
+                {# Desktop table #}
+                <div class="d-none d-md-block" style="overflow:hidden;">
+                    <div class="table-responsive">
+                        <table style="width:100%;border-collapse:collapse;">
+                            <thead>
+                                <tr style="background:var(--bg-surface);border-bottom:1px solid var(--border);">
+                                    {% for col in ['Activité', 'Début', 'Fin', 'Statut', 'Actions'] %}
+                                        <th style="padding:.85rem 1.25rem;text-align:left;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);">
+                                            {{ col }}
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for membership in memberships %}
+                                    <tr style="border-bottom:1px solid var(--border);transition:background .15s;"
+                                        onmouseover="this.style.background='var(--bg-surface)'" onmouseout="this.style.background=''">
+                                        <td style="padding:1rem 1.25rem;">
+                                            {% set iconMap = {airsoft:'crosshairs', board_game:'chess', video_game:'gamepad', card_game:'layer-group', role_playing:'scroll'} %}
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div style="width:34px;height:34px;background:rgba(230,55,87,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                    <i class="fas fa-{{ iconMap[membership.activity.type] ?? 'gamepad' }}" style="color:var(--accent);font-size:.85rem;"></i>
+                                                </div>
+                                                <div>
+                                                    <div style="font-weight:600;color:var(--text-primary);">{{ membership.activity.name }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding:1rem 1.25rem;color:var(--text-muted);font-size:.9rem;white-space:nowrap;">
+                                            {{ membership.startDate|date('d/m/Y') }}
+                                        </td>
+                                        <td style="padding:1rem 1.25rem;color:var(--text-muted);font-size:.9rem;white-space:nowrap;">
+                                            {{ membership.endDate ? membership.endDate|date('d/m/Y') : '—' }}
+                                        </td>
+                                        <td style="padding:1rem 1.25rem;">
+                                            {% set statusBadge = {active:'badge-success', expired:'badge-warning', cancelled:'badge-danger'} %}
+                                            {% set statusLabel = {active:'Actif', expired:'Expiré', cancelled:'Annulé'} %}
+                                            <span class="badge {{ statusBadge[membership.status] ?? 'badge-surface' }}">
+                                                {{ statusLabel[membership.status] ?? membership.status }}
+                                            </span>
+                                        </td>
+                                        <td style="padding:1rem 1.25rem;">
+                                            {% if membership.status == 'active' %}
+                                                <form method="post" action="{{ path('app_member_membership_cancel', {id: membership.id}) }}" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm fw-semibold"
+                                                            style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:#f87171;padding:.3rem .75rem;border-radius:7px;"
+                                                            onclick="return confirm('Annuler cette adhésion ?')">
+                                                        <i class="fas fa-times me-1"></i>Annuler
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <span class="small" style="color:var(--text-muted);">—</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {# Mobile cards #}
+                <div class="d-flex d-md-none flex-column gap-3 p-4">
+                    {% for membership in memberships %}
+                        <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:1rem;">
+                            {% set iconMap = {airsoft:'crosshairs', board_game:'chess', video_game:'gamepad', card_game:'layer-group', role_playing:'scroll'} %}
+                            {% set statusBadge = {active:'badge-success', expired:'badge-warning', cancelled:'badge-danger'} %}
+                            {% set statusLabel = {active:'Actif', expired:'Expiré', cancelled:'Annulé'} %}
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:32px;height:32px;background:rgba(230,55,87,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fas fa-{{ iconMap[membership.activity.type] ?? 'gamepad' }}" style="color:var(--accent);font-size:.8rem;"></i>
+                                    </div>
+                                    <span style="font-weight:600;color:var(--text-primary);">{{ membership.activity.name }}</span>
+                                </div>
+                                <span class="badge {{ statusBadge[membership.status] ?? 'badge-surface' }} ms-2">
+                                    {{ statusLabel[membership.status] ?? membership.status }}
+                                </span>
+                            </div>
+                            <div class="small d-flex flex-column gap-1 mb-3" style="color:var(--text-muted);">
+                                <span><i class="fas fa-calendar-plus me-1"></i>Depuis le {{ membership.startDate|date('d/m/Y') }}</span>
+                                {% if membership.endDate %}
+                                    <span><i class="fas fa-calendar-xmark me-1"></i>Jusqu'au {{ membership.endDate|date('d/m/Y') }}</span>
+                                {% endif %}
+                            </div>
+                            {% if membership.status == 'active' %}
+                                <form method="post" action="{{ path('app_member_membership_cancel', {id: membership.id}) }}">
+                                    <button type="submit" class="btn btn-sm w-100"
+                                            style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:#f87171;"
+                                            onclick="return confirm('Annuler cette adhésion ?')">
+                                        <i class="fas fa-times me-1"></i>Annuler l'adhésion
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        {# ── Activities to join ── #}
+        {% set joinable = activities|filter(a => a.id not in active_activity_ids) %}
+        {% if joinable is not empty %}
+            <div class="card-dark">
+                <div class="p-4" style="border-bottom:1px solid var(--border);">
+                    <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin:0;color:var(--text-primary);">
+                        <i class="fas fa-plus-circle me-2" style="color:#34d399;"></i>Rejoindre une activité
+                    </h5>
+                    <p class="small mb-0 mt-1" style="color:var(--text-muted);">Adhérez à une nouvelle activité pour un an.</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="row g-3">
+                        {% set iconMap = {airsoft:'crosshairs', board_game:'chess', video_game:'gamepad', card_game:'layer-group', role_playing:'scroll'} %}
+                        {% set typeLabel = {airsoft:'Airsoft', board_game:'Jeu de plateau', video_game:'Jeu vidéo', card_game:'Jeu de cartes', role_playing:'Jeu de rôle'} %}
+
+                        {% for activity in joinable %}
+                            <div class="col-md-6 col-lg-4">
+                                <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;height:100%;display:flex;flex-direction:column;transition:border-color .2s,transform .2s;"
+                                     onmouseover="this.style.borderColor='rgba(230,55,87,.4)';this.style.transform='translateY(-2px)'"
+                                     onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+
+                                    <div class="d-flex align-items-start gap-3 mb-3">
+                                        <div style="width:44px;height:44px;background:rgba(230,55,87,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                            <i class="fas fa-{{ iconMap[activity.type] ?? 'gamepad' }}" style="color:var(--accent);font-size:1.1rem;"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div style="font-weight:700;color:var(--text-primary);font-size:1rem;">{{ activity.name }}</div>
+                                            <div class="small" style="color:var(--text-muted);">{{ typeLabel[activity.type] ?? activity.type }}</div>
+                                        </div>
+                                    </div>
+
+                                    {% if activity.description %}
+                                        <p class="small mb-3" style="color:var(--text-muted);flex-grow:1;">{{ activity.description|slice(0,100) }}{% if activity.description|length > 100 %}…{% endif %}</p>
+                                    {% else %}
+                                        <div class="flex-grow-1"></div>
+                                    {% endif %}
+
+                                    {# Subscription rates #}
+                                    {% set activeRates = activity.subscriptionRates|filter(r => r.isActive) %}
+                                    {% if activeRates is not empty %}
+                                        <div class="mb-3">
+                                            <div class="small fw-semibold mb-2" style="color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;font-size:.7rem;">Tarifs</div>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                {% set periodLabel = {annual:'/ an', monthly:'/ mois', quarterly:'/ trim.'} %}
+                                                {% for rate in activeRates %}
+                                                    <span style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2);color:#34d399;border-radius:6px;padding:.2rem .55rem;font-size:.78rem;font-weight:600;">
+                                                        {{ rate.amount }}€ {{ periodLabel[rate.period] ?? rate.period }}
+                                                        {% if rate.memberCategory %}
+                                                            <span style="opacity:.7;font-weight:400;">({{ rate.memberCategory }})</span>
+                                                        {% endif %}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    <form method="post" action="{{ path('app_member_membership_join', {activityId: activity.id}) }}">
+                                        <button type="submit" class="btn btn-accent btn-sm w-100 fw-semibold">
+                                            <i class="fas fa-user-plus me-2"></i>Rejoindre
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% elseif activities is not empty %}
+            <div class="card-dark p-4 text-center">
+                <i class="fas fa-circle-check fa-2x mb-3 d-block" style="color:#34d399;opacity:.6;"></i>
+                <p class="mb-0" style="color:var(--text-muted);">Vous êtes membre de toutes les activités disponibles.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
