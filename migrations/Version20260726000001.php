@@ -184,12 +184,12 @@ final class Version20260726000001 extends AbstractMigration
                 description LONGTEXT DEFAULT NULL,
                 category VARCHAR(50) NOT NULL,
                 quantity INT NOT NULL DEFAULT 1,
-                `condition` VARCHAR(30) NOT NULL DEFAULT 'good',
                 purchase_price NUMERIC(8, 2) DEFAULT NULL,
                 purchase_date DATE DEFAULT NULL,
                 serial_number VARCHAR(100) DEFAULT NULL,
                 image VARCHAR(255) DEFAULT NULL,
                 is_available TINYINT(1) NOT NULL DEFAULT 1,
+                etat VARCHAR(30) NOT NULL DEFAULT 'good',
                 INDEX IDX_D338D583EF641AF1 (assigned_to_id),
                 PRIMARY KEY(id)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB

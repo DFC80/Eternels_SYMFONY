@@ -25,7 +25,7 @@ class Equipment
     #[ORM\Column]
     private ?int $quantity = 1;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(name: 'etat', length: 30)]
     private ?string $condition = 'good'; // new, good, fair, poor, out_of_service
 
     #[ORM\Column(type: 'decimal', precision: 8, scale: 2, nullable: true)]
