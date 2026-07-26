@@ -7,71 +7,181 @@
 <div style="padding:2.5rem 0 4rem;min-height:calc(100vh - 74px);">
     <div class="container">
 
-        <div class="row justify-content-center">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="{{ path('app_member_dashboard') }}"
+               class="d-inline-flex align-items-center gap-2 small fw-semibold"
+               style="color:var(--text-muted);text-decoration:none;transition:color .2s;"
+               onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">
+                <i class="fas fa-arrow-left"></i> Mon espace
+            </a>
+        </div>
+
+        <div class="row g-4 justify-content-center">
             <div class="col-lg-8">
 
-                {# Header #}
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <a href="{{ path('app_member_dashboard') }}"
-                       class="d-inline-flex align-items-center gap-2 small fw-semibold"
-                       style="color:var(--text-muted);text-decoration:none;transition:color .2s;"
-                       onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">
-                        <i class="fas fa-arrow-left"></i> Mon espace
-                    </a>
-                </div>
-
-                {# Profile card #}
-                <div class="card-dark overflow-hidden">
-                    <div style="background:linear-gradient(135deg,rgba(230,55,87,.15) 0%,rgba(20,22,40,0) 70%);padding:2.5rem;border-bottom:1px solid var(--border);">
-                        <div class="d-flex align-items-center gap-4">
-                            <div class="avatar-initials" style="width:80px;height:80px;font-size:2rem;flex-shrink:0;">
-                                {{ user.firstName|first|upper }}
-                            </div>
-                            <div>
-                                <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.8rem;margin-bottom:.35rem;line-height:1.1;">
-                                    {{ user.firstName }} {{ user.lastName }}
-                                </h2>
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <span class="badge {{ user.isVerified ? 'badge-success' : 'badge-warning' }}">
-                                        <i class="fas fa-{{ user.isVerified ? 'circle-check' : 'clock' }} me-1"></i>
-                                        {{ user.isVerified ? 'Compte vérifié' : 'Vérification en attente' }}
-                                    </span>
-                                    <span class="badge badge-surface">
-                                        <i class="fas fa-calendar-plus me-1"></i>Membre depuis {{ user.createdAt|date('d/m/Y') }}
-                                    </span>
-                                </div>
+                {# ── Profile summary header ── #}
+                <div class="card-dark overflow-hidden mb-4"
+                     style="background:linear-gradient(135deg,rgba(230,55,87,.12) 0%,var(--bg-card) 60%);border-color:rgba(230,55,87,.2);">
+                    <div class="p-4 p-md-5 d-flex align-items-center gap-4">
+                        <div class="avatar-initials" style="width:72px;height:72px;font-size:1.8rem;flex-shrink:0;">
+                            {{ user.firstName|first|upper }}
+                        </div>
+                        <div>
+                            <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.8rem;margin-bottom:.4rem;line-height:1.1;">
+                                {{ user.firstName }} {{ user.lastName }}
+                            </h2>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge {{ user.isVerified ? 'badge-success' : 'badge-warning' }}">
+                                    <i class="fas fa-{{ user.isVerified ? 'circle-check' : 'clock' }} me-1"></i>
+                                    {{ user.isVerified ? 'Compte vérifié' : 'Non vérifié' }}
+                                </span>
+                                <span class="badge badge-surface">
+                                    <i class="fas fa-calendar-plus me-1"></i>Membre depuis {{ user.createdAt|date('d/m/Y') }}
+                                </span>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {# ── Edit profile form ── #}
+                <div class="card-dark mb-4">
+                    <div class="p-4" style="border-bottom:1px solid var(--border);">
+                        <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin:0;color:var(--text-primary);">
+                            <i class="fas fa-user-pen me-2" style="color:var(--accent);"></i>Modifier mes informations
+                        </h5>
+                    </div>
 
                     <div class="p-4 p-md-5">
-                        <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:1.5rem;color:var(--text-primary);">
-                            <i class="fas fa-user me-2" style="color:var(--accent);"></i>Informations personnelles
-                        </h5>
+                        {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
 
-                        <div class="row g-4">
-                            {% for field in [
-                                {label:'Prénom',         icon:'user',        value: user.firstName},
-                                {label:'Nom',            icon:'user',        value: user.lastName},
-                                {label:'Email',          icon:'envelope',    value: user.email},
-                                {label:'Téléphone',      icon:'phone',       value: user.phone ?? '—'},
-                                {label:'Adresse',        icon:'location-dot',value: user.address ?? '—'},
-                            ] %}
-                                <div class="col-sm-6">
-                                    <div class="small fw-semibold mb-1" style="color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;font-size:.7rem;">
-                                        <i class="fas fa-{{ field.icon }} me-1" style="color:var(--accent);"></i>{{ field.label }}
-                                    </div>
-                                    <div style="color:var(--text-primary);font-weight:500;">{{ field.value }}</div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold" style="color:var(--text-muted);">Prénom</label>
+                                <div class="input-group input-group-dark">
+                                    <span class="input-group-text"><i class="fas fa-user fa-sm"></i></span>
+                                    {{ form_widget(form.firstName) }}
                                 </div>
-                            {% endfor %}
+                                {% if form_errors(form.firstName) is not empty %}
+                                    <div class="small mt-1" style="color:#f87171;">{{ form_errors(form.firstName) }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold" style="color:var(--text-muted);">Nom</label>
+                                <div class="input-group input-group-dark">
+                                    <span class="input-group-text"><i class="fas fa-user fa-sm"></i></span>
+                                    {{ form_widget(form.lastName) }}
+                                </div>
+                                {% if form_errors(form.lastName) is not empty %}
+                                    <div class="small mt-1" style="color:#f87171;">{{ form_errors(form.lastName) }}</div>
+                                {% endif %}
+                            </div>
                         </div>
 
-                        <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);">
-                            <p class="small mb-0" style="color:var(--text-muted);">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Pour modifier vos informations, contactez un administrateur de l'association.
-                            </p>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold" style="color:var(--text-muted);">Adresse email</label>
+                            <div class="input-group input-group-dark">
+                                <span class="input-group-text"><i class="fas fa-envelope fa-sm"></i></span>
+                                {{ form_widget(form.email) }}
+                            </div>
+                            {% if form_errors(form.email) is not empty %}
+                                <div class="small mt-1" style="color:#f87171;">{{ form_errors(form.email) }}</div>
+                            {% endif %}
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold" style="color:var(--text-muted);">
+                                Téléphone <span style="font-weight:400;">(optionnel)</span>
+                            </label>
+                            <div class="input-group input-group-dark">
+                                <span class="input-group-text"><i class="fas fa-phone fa-sm"></i></span>
+                                {{ form_widget(form.phone) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold" style="color:var(--text-muted);">
+                                Adresse postale <span style="font-weight:400;">(optionnel)</span>
+                            </label>
+                            <div class="input-group input-group-dark">
+                                <span class="input-group-text"><i class="fas fa-location-dot fa-sm"></i></span>
+                                {{ form_widget(form.address) }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-accent px-4 fw-semibold">
+                                <i class="fas fa-floppy-disk me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a href="{{ path('app_member_dashboard') }}" class="btn btn-outline-accent px-4">
+                                Annuler
+                            </a>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                {# ── Change password ── #}
+                <div class="card-dark">
+                    <div class="p-4" style="border-bottom:1px solid var(--border);">
+                        <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin:0;color:var(--text-primary);">
+                            <i class="fas fa-lock me-2" style="color:var(--accent);"></i>Changer le mot de passe
+                        </h5>
+                    </div>
+                    <div class="p-4 p-md-5">
+                        <form method="post" action="{{ path('app_member_change_password') }}" id="passwordForm">
+                            <input type="hidden" name="_token" value="{{ csrf_token('change_password') }}">
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold" style="color:var(--text-muted);">Mot de passe actuel</label>
+                                <div class="input-group input-group-dark">
+                                    <span class="input-group-text"><i class="fas fa-lock fa-sm"></i></span>
+                                    <input type="password" name="current_password"
+                                           class="form-control form-control-dark"
+                                           placeholder="••••••••" autocomplete="current-password" required>
+                                    <button type="button" class="input-group-text toggle-pw" data-target="current_password"
+                                            style="border-left:none;cursor:pointer;">
+                                        <i class="fas fa-eye fa-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold" style="color:var(--text-muted);">Nouveau mot de passe</label>
+                                <div class="input-group input-group-dark">
+                                    <span class="input-group-text"><i class="fas fa-lock fa-sm"></i></span>
+                                    <input type="password" name="new_password" id="newPw"
+                                           class="form-control form-control-dark"
+                                           placeholder="Au moins 8 caractères" autocomplete="new-password" required minlength="8">
+                                    <button type="button" class="input-group-text toggle-pw" data-target="new_password"
+                                            style="border-left:none;cursor:pointer;">
+                                        <i class="fas fa-eye fa-sm"></i>
+                                    </button>
+                                </div>
+                                {# Strength indicator #}
+                                <div class="mt-2" id="strengthWrap" style="display:none;">
+                                    <div style="background:var(--bg-surface);border-radius:99px;height:5px;overflow:hidden;">
+                                        <div id="strengthBar" style="height:100%;width:0;border-radius:99px;transition:width .3s,background .3s;"></div>
+                                    </div>
+                                    <div id="strengthLabel" class="small mt-1" style="color:var(--text-muted);"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold" style="color:var(--text-muted);">Confirmer le nouveau mot de passe</label>
+                                <div class="input-group input-group-dark">
+                                    <span class="input-group-text"><i class="fas fa-lock fa-sm"></i></span>
+                                    <input type="password" name="confirm_password" id="confirmPw"
+                                           class="form-control form-control-dark"
+                                           placeholder="Répétez le mot de passe" autocomplete="new-password" required>
+                                </div>
+                                <div id="matchMsg" class="small mt-1" style="display:none;"></div>
+                            </div>
+
+                            <button type="submit" class="btn btn-outline-accent px-4 fw-semibold">
+                                <i class="fas fa-key me-2"></i>Changer le mot de passe
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -79,5 +189,69 @@
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+    // Toggle password visibility
+    document.querySelectorAll('.toggle-pw').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var name = this.dataset.target;
+            var input = document.querySelector('input[name="' + name + '"]');
+            var icon  = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    });
+
+    // Password strength
+    var newPw = document.getElementById('newPw');
+    var strengthBar = document.getElementById('strengthBar');
+    var strengthLabel = document.getElementById('strengthLabel');
+    var strengthWrap = document.getElementById('strengthWrap');
+    var confirmPw = document.getElementById('confirmPw');
+    var matchMsg = document.getElementById('matchMsg');
+
+    newPw && newPw.addEventListener('input', function () {
+        var val = this.value;
+        strengthWrap.style.display = val.length ? '' : 'none';
+        var score = 0;
+        if (val.length >= 8)  score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+        var levels = [
+            {w:'25%', c:'#f87171', l:'Très faible'},
+            {w:'50%', c:'#fbbf24', l:'Faible'},
+            {w:'75%', c:'#60a5fa', l:'Moyen'},
+            {w:'100%',c:'#4ade80', l:'Fort'},
+        ];
+        var lvl = levels[score - 1] || levels[0];
+        strengthBar.style.width = lvl.w;
+        strengthBar.style.background = lvl.c;
+        strengthLabel.style.color = lvl.c;
+        strengthLabel.textContent = lvl.l;
+        checkMatch();
+    });
+
+    confirmPw && confirmPw.addEventListener('input', checkMatch);
+
+    function checkMatch() {
+        if (!confirmPw.value) { matchMsg.style.display = 'none'; return; }
+        matchMsg.style.display = '';
+        if (newPw.value === confirmPw.value) {
+            matchMsg.style.color = '#4ade80';
+            matchMsg.textContent = '✓ Les mots de passe correspondent';
+        } else {
+            matchMsg.style.color = '#f87171';
+            matchMsg.textContent = '✗ Les mots de passe ne correspondent pas';
+        }
+    }
+})();
+</script>
 
 {% endblock %}
