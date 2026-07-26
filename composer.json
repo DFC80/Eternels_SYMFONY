@@ -9,6 +9,9 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^3.3",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.6",
         "easycorp/easyadmin-bundle": "^5.3",
         "knplabs/knp-paginator-bundle": "^6.10",
         "symfony/asset": "^8.1",
@@ -19,7 +22,6 @@
         "symfony/framework-bundle": "^8.1",
         "symfony/mailer": "^8.1",
         "symfony/maker-bundle": "^1.67",
-        "symfony/orm-pack": "^2.7",
         "symfony/runtime": "^8.1",
         "symfony/security-bundle": "^8.1",
         "symfony/twig-bundle": "^8.1",
@@ -60,7 +62,10 @@
         "symfony/polyfill-php82": "*"
     },
     "scripts": {
-        "auto-scripts": [],
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
         "post-install-cmd": [
             "@auto-scripts"
         ],
@@ -76,5 +81,9 @@
             "allow-contrib": false,
             "require": "7.*"
         }
+    },
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "fakerphp/faker": "^1.24"
     }
 }
