@@ -19,30 +19,30 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('firstName', TextType::class, [
-                'label' => 'Prenom',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Votre prenom'],
+                'label' => 'Prénom',
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Votre prénom'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Veuillez entrer votre prenom']),
-                    new Length(['min' => 2, 'minMessage' => 'Le prenom doit contenir au moins 2 caracteres']),
+                    new NotBlank(message: 'Veuillez entrer votre prénom'),
+                    new Length(min: 2, minMessage: 'Le prénom doit contenir au moins 2 caractères'),
                 ],
             ])
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Votre nom'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Veuillez entrer votre nom']),
-                    new Length(['min' => 2, 'minMessage' => 'Le nom doit contenir au moins 2 caracteres']),
+                    new NotBlank(message: 'Veuillez entrer votre nom'),
+                    new Length(min: 2, minMessage: 'Le nom doit contenir au moins 2 caractères'),
                 ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'votre@email.fr'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Veuillez entrer votre email']),
+                    new NotBlank(message: 'Veuillez entrer votre email'),
                 ],
             ])
             ->add('phone', TextType::class, [
-                'label' => 'Telephone',
+                'label' => 'Téléphone',
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'placeholder' => '06 XX XX XX XX'],
             ])
@@ -58,12 +58,8 @@ class RegistrationFormType extends AbstractType
                     'attr' => ['class' => 'form-control', 'placeholder' => 'Confirmez le mot de passe'],
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'Veuillez entrer un mot de passe']),
-                    new Length([
-                        'min' => 8,
-                        'minMessage' => 'Le mot de passe doit contenir au moins 8 caracteres',
-                        'max' => 4096,
-                    ]),
+                    new NotBlank(message: 'Veuillez entrer un mot de passe'),
+                    new Length(min: 8, minMessage: 'Le mot de passe doit contenir au moins 8 caractères', max: 4096),
                 ],
             ]);
     }
