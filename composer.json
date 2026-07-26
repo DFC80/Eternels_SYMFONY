@@ -9,28 +9,28 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/doctrine-bundle": "^3.3",
-        "doctrine/doctrine-migrations-bundle": "^4.0",
-        "doctrine/orm": "^3.6",
-        "easycorp/easyadmin-bundle": "^5.3",
-        "knplabs/knp-paginator-bundle": "^6.10",
-        "symfony/asset": "^8.1",
-        "symfony/console": "^8.1",
-        "symfony/dotenv": "^8.1",
+        "doctrine/doctrine-bundle": "^2.13|^3.0",
+        "doctrine/doctrine-migrations-bundle": "^3.3|^4.0",
+        "doctrine/orm": "^3.0",
+        "easycorp/easyadmin-bundle": "^4.8|^5.0",
+        "knplabs/knp-paginator-bundle": "^6.3",
+        "symfony/asset": "^7.2",
+        "symfony/console": "^7.2",
+        "symfony/dotenv": "^7.2",
         "symfony/flex": "^2",
-        "symfony/form": "^8.1",
-        "symfony/framework-bundle": "^8.1",
-        "symfony/mailer": "^8.1",
-        "symfony/maker-bundle": "^1.67",
-        "symfony/runtime": "^8.1",
-        "symfony/security-bundle": "^8.1",
-        "symfony/twig-bundle": "^8.1",
-        "symfony/uid": "^8.1",
-        "symfony/validator": "^8.1",
-        "symfony/web-profiler-bundle": "^8.1",
-        "symfony/yaml": "^8.1",
-        "twig/twig": "~3.27.1",
-        "vich/uploader-bundle": "^2.9"
+        "symfony/form": "^7.2",
+        "symfony/framework-bundle": "^7.2",
+        "symfony/mailer": "^7.2",
+        "symfony/maker-bundle": "^1.60",
+        "symfony/runtime": "^7.2",
+        "symfony/security-bundle": "^7.2",
+        "symfony/twig-bundle": "^7.2",
+        "symfony/uid": "^7.2",
+        "symfony/validator": "^7.2",
+        "symfony/web-profiler-bundle": "^7.2",
+        "symfony/yaml": "^7.2",
+        "twig/twig": "^3.0",
+        "vich/uploader-bundle": "^2.0"
     },
     "config": {
         "allow-plugins": {
@@ -39,6 +39,9 @@
             "symfony/runtime": true
         },
         "bump-after-update": true,
+        "platform": {
+            "php": "8.2.0"
+        },
         "sort-packages": true
     },
     "autoload": {
@@ -79,7 +82,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.*"
+            "require": "7.2.*"
         }
     },
     "require-dev": {
