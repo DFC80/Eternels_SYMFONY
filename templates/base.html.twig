@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Les Éternels — Association de Jeux{% endblock %}</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
+
+    <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/fontawesome/css/all.min.css') }}" rel="stylesheet">
+
+    {% block stylesheets %}{% endblock %}
+
+    <style>
+        /* ── Fonts (local) ─────────────────────────────────────────── */
+        @font-face {
+            font-family: 'Rajdhani';
+            font-style: normal;
+            font-weight: 400 700;
+            src: local('Rajdhani'), local('Impact'), local('Arial Narrow');
+            font-display: swap;
+        }
+
+        /* ── Design tokens ─────────────────────────────────────────── */
+        :root {
+            --bg-dark:      #0d0f1a;
+            --bg-card:      #141628;
+            --bg-surface:   #1c1f35;
+            --accent:       #e63757;
+            --accent-light: #ff6b84;
+            --accent-glow:  rgba(230, 55, 87, .25);
+            --text-primary: #f0f2ff;
+            --text-muted:   #8b8fa8;
+            --border:       rgba(255,255,255,.08);
+            --radius-card:  14px;
+            --transition:   .25s ease;
+            --shadow-card:  0 4px 24px rgba(0,0,0,.35);
+            --shadow-hover: 0 12px 40px rgba(230,55,87,.2);
+        }
+
+        /* ── Base ──────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main { flex: 1; }
+
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: .02em;
+        }
+
+        /* ── Navbar ────────────────────────────────────────────────── */
+        .navbar {
+            background: rgba(13, 15, 26, .92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: .85rem 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary) !important;
+            letter-spacing: .05em;
+        }
+
+        .navbar-brand span { color: var(--accent); }
+
+        .navbar-toggler { border-color: var(--border); }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%28240,242,255,.85%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        .nav-link {
+            color: rgba(240,242,255,.75) !important;
+            font-size: .9rem;
+            font-weight: 500;
+            padding: .5rem .9rem !important;
+            border-radius: 6px;
+            transition: color var(--transition), background var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-primary) !important;
+            background: rgba(255,255,255,.06);
+        }
+
+        .nav-link.active { color: var(--accent) !important; }
+
+        .dropdown-menu {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: .5rem;
+            box-shadow: var(--shadow-card);
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: .55rem .85rem;
+            font-size: .875rem;
+            transition: background var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255,255,255,.07);
+            color: var(--accent);
+        }
+
+        .dropdown-divider { border-color: var(--border); }
+
+        /* ── Buttons ───────────────────────────────────────────────── */
+        .btn-accent {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all var(--transition);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent-light);
+            color: #fff;
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-accent {
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            background: transparent;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all var(--transition);
+        }
+
+        .btn-outline-accent:hover {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 18px var(--accent-glow);
+        }
+
+        /* ── Cards ─────────────────────────────────────────────────── */
+        .card-dark {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .card-dark:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(230,55,87,.3);
+        }
+
+        /* ── Section header ────────────────────────────────────────── */
+        .section-label {
+            font-size: .75rem;
+            font-weight: 600;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            display: inline-block;
+            margin-bottom: .5rem;
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: .5rem;
+        }
+
+        .section-divider {
+            width: 48px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin: .75rem auto 0;
+        }
+
+        /* ── Page hero (inner pages) ───────────────────────────────── */
+        .page-hero {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-surface) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 3.5rem 0 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── Badge variants ────────────────────────────────────────── */
+        .badge-accent  { background: var(--accent);   color: #fff; }
+        .badge-surface { background: var(--bg-surface); color: var(--text-muted); border: 1px solid var(--border); }
+        .badge-success { background: rgba(34,197,94,.15); color: #4ade80; border: 1px solid rgba(74,222,128,.2); }
+        .badge-warning { background: rgba(251,191,36,.15); color: #fbbf24; border: 1px solid rgba(251,191,36,.2); }
+        .badge-danger  { background: rgba(239,68,68,.15);  color: #f87171; border: 1px solid rgba(248,113,113,.2); }
+        .badge-info    { background: rgba(56,189,248,.15); color: #38bdf8; border: 1px solid rgba(56,189,248,.2); }
+
+        /* ── Lists ─────────────────────────────────────────────────── */
+        .list-item-dark {
+            border-bottom: 1px solid var(--border);
+            padding: .9rem 0;
+        }
+        .list-item-dark:last-child { border-bottom: none; }
+
+        /* ── Stat card ─────────────────────────────────────────────── */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 1.5rem 1.25rem;
+            text-align: center;
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+        .stat-icon {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: .75rem;
+        }
+
+        /* ── Activity icon badges ──────────────────────────────────── */
+        .activity-icon {
+            width: 72px; height: 72px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            background: rgba(230,55,87,.12);
+            border: 1px solid rgba(230,55,87,.25);
+            color: var(--accent);
+            transition: all var(--transition);
+        }
+
+        .card-dark:hover .activity-icon {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* ── Event date badge ──────────────────────────────────────── */
+        .event-date-badge {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .6rem .9rem;
+            text-align: center;
+            min-width: 56px;
+            flex-shrink: 0;
+        }
+
+        .event-date-badge .day {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--accent);
+        }
+
+        .event-date-badge .month {
+            font-size: .65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-muted);
+        }
+
+        /* ── Form controls dark ────────────────────────────────────── */
+        .form-control-dark, .form-select-dark {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: .65rem 1rem;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .form-control-dark::placeholder { color: var(--text-muted); }
+
+        .form-control-dark:focus {
+            background: var(--bg-surface);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-group-dark .input-group-text {
+            background: rgba(255,255,255,.05);
+            border: 1px solid var(--border);
+            border-right: none;
+            color: var(--text-muted);
+            border-radius: 8px 0 0 8px;
+        }
+
+        .input-group-dark .form-control-dark {
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* ── Flash messages ────────────────────────────────────────── */
+        .toast-stack {
+            position: fixed;
+            top: 80px; right: 1.25rem;
+            z-index: 1090;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            min-width: 300px;
+            max-width: 380px;
+        }
+
+        .toast-msg {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 10px;
+            padding: .85rem 1rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-card);
+            animation: slideIn .3s ease;
+        }
+
+        .toast-msg.toast-success { border-left-color: #4ade80; }
+        .toast-msg.toast-warning { border-left-color: #fbbf24; }
+        .toast-msg.toast-danger  { border-left-color: #f87171; }
+
+        @keyframes slideIn {
+            from { transform: translateX(40px); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
+        }
+
+        /* ── Progress bar ──────────────────────────────────────────── */
+        .progress-dark {
+            background: var(--bg-surface);
+            border-radius: 99px;
+            height: 6px;
+        }
+
+        .progress-dark .progress-bar { background: var(--accent); border-radius: 99px; }
+
+        /* ── Footer ────────────────────────────────────────────────── */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+        }
+
+        footer .footer-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        footer .footer-brand span { color: var(--accent); }
+
+        footer a.footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: .875rem;
+            transition: color var(--transition);
+        }
+
+        footer a.footer-link:hover { color: var(--accent); }
+
+        footer .footer-copy {
+            color: var(--text-muted);
+            font-size: .8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Scrollbar ─────────────────────────────────────────────── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* ── Utilities ─────────────────────────────────────────────── */
+        .text-accent  { color: var(--accent) !important; }
+        .text-muted-custom { color: var(--text-muted) !important; }
+        .bg-card  { background: var(--bg-card) !important; }
+        .bg-surface { background: var(--bg-surface) !important; }
+        .border-dark-custom { border-color: var(--border) !important; }
+
+        .avatar-initials {
+            width: 42px; height: 42px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .divider-text {
+            display: flex; align-items: center; gap: 1rem; color: var(--text-muted); font-size: .8rem;
+        }
+        .divider-text::before, .divider-text::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+
+        /* ── Responsive tweaks ─────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .section-title { font-size: 1.7rem; }
+            .page-hero { padding: 2.5rem 0 1.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+{# ─── Navbar ───────────────────────────────────────────────────── #}
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('app_home') }}">
+            <i class="fas fa-gamepad me-2" style="color:var(--accent)"></i>Les <span>Éternels</span>
+        </a>
+
+        <button class="navbar-toggler border-0 px-2" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav mx-auto gap-1">
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}"
+                       href="{{ path('app_home') }}">
+                        <i class="fas fa-house me-1 fa-sm"></i>Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'app_activ' %}active{% endif %}"
+                       href="{{ path('app_activities') }}">
+                        <i class="fas fa-gamepad me-1 fa-sm"></i>Activités
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'app_event' %}active{% endif %}"
+                       href="{{ path('app_events') }}">
+                        <i class="fas fa-calendar-days me-1 fa-sm"></i>Événements
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav gap-1 align-items-center">
+                {% if app.user %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                           href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="avatar-initials" style="width:32px;height:32px;font-size:.85rem;border-radius:8px;">
+                                {{ app.user.firstName|first|upper }}
+                            </span>
+                            <span>{{ app.user.firstName }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_member_dashboard') }}">
+                                    <i class="fas fa-gauge me-2 text-accent"></i>Mon espace
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_member_profile') }}">
+                                    <i class="fas fa-user-pen me-2 text-accent"></i>Mon profil
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_member_my_events') }}">
+                                    <i class="fas fa-calendar-check me-2 text-accent"></i>Mes événements
+                                </a>
+                            </li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('admin') }}">
+                                        <i class="fas fa-shield-halved me-2" style="color:var(--accent)"></i>Administration
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_logout') }}">
+                                    <i class="fas fa-arrow-right-from-bracket me-2"></i>Déconnexion
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-accent btn-sm px-3 py-2" href="{{ path('app_register') }}">
+                            <i class="fas fa-user-plus me-1"></i>Rejoindre
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{# ─── Toast notifications ──────────────────────────────────────── #}
+<div class="toast-stack" id="toastStack">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="toast-msg toast-{{ type == 'error' ? 'danger' : type }} d-flex align-items-start gap-3" role="alert">
+                <i class="fas fa-{{ type == 'success' ? 'circle-check' : (type == 'error' ? 'circle-xmark' : (type == 'warning' ? 'triangle-exclamation' : 'circle-info')) }} mt-1 flex-shrink-0"
+                   style="color: {{ type == 'success' ? '#4ade80' : (type == 'error' or type == 'danger' ? '#f87171' : (type == 'warning' ? '#fbbf24' : '#38bdf8')) }}"></i>
+                <span class="flex-grow-1 small">{{ message }}</span>
+                <button type="button" class="btn-close btn-close-white btn-close-sm flex-shrink-0" aria-label="Fermer"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+{# ─── Main content ─────────────────────────────────────────────── #}
+<main>
+    {% block body %}{% endblock %}
+</main>
+
+{# ─── Footer ───────────────────────────────────────────────────── #}
+<footer class="py-5 mt-auto">
+    <div class="container">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4 col-md-6">
+                <p class="footer-brand mb-2">
+                    <i class="fas fa-gamepad me-2" style="color:var(--accent)"></i>Les <span>Éternels</span>
+                </p>
+                <p class="small" style="color:var(--text-muted)">
+                    Association passionnée de jeux — airsoft, jeux de plateau, jeux vidéo et bien plus.
+                    Venez partager notre passion !
+                </p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <p class="small fw-semibold mb-3" style="color:var(--text-primary)">Navigation</p>
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                    <li><a href="{{ path('app_activities') }}" class="footer-link"><i class="fas fa-chevron-right fa-xs me-1"></i>Activités</a></li>
+                    <li><a href="{{ path('app_events') }}"    class="footer-link"><i class="fas fa-chevron-right fa-xs me-1"></i>Événements</a></li>
+                    <li><a href="{{ path('app_register') }}"  class="footer-link"><i class="fas fa-chevron-right fa-xs me-1"></i>Inscription</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <p class="small fw-semibold mb-3" style="color:var(--text-primary)">Espace membre</p>
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                    {% if app.user %}
+                        <li><a href="{{ path('app_member_dashboard') }}" class="footer-link"><i class="fas fa-chevron-right fa-xs me-1"></i>Tableau de bord</a></li>
+                        <li><a href="{{ path('app_member_events') }}"    class="footer-link"><i class="fas fa-chevron-right fa-xs me-1"></i>Mes événements</a></li>
+                    {% else %}
+                        <li><a href="{{ path('app_login') }}"   class="footer-link"><i class="fas fa-chevron-right fa-xs me-1"></i>Connexion</a></li>
+                        <li><a href="{{ path('app_register') }}" class="footer-link"><i class="fas fa-chevron-right fa-xs me-1"></i>Créer un compte</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <p class="small fw-semibold mb-3" style="color:var(--text-primary)">Contact</p>
+                <div class="d-flex flex-column gap-2">
+                    <a href="mailto:contact@les-eternels.fr" class="footer-link">
+                        <i class="fas fa-envelope me-2 text-accent"></i>contact@les-eternels.fr
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-copy pt-4 mt-2 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span>&copy; {{ "now"|date("Y") }} Les Éternels. Tous droits réservés.</span>
+            <span>Fait avec <i class="fas fa-heart text-accent fa-xs"></i> par des passionnés de jeux</span>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+{% block javascripts %}{% endblock %}
+
+<script>
+(function() {
+    // Close buttons in custom toasts
+    document.querySelectorAll('.toast-msg .btn-close').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            this.closest('.toast-msg').remove();
+        });
+    });
+    // Auto-dismiss after 5s
+    document.querySelectorAll('.toast-msg').forEach(function(el) {
+        setTimeout(function() { el.style.opacity = '0'; el.style.transform = 'translateX(40px)'; el.style.transition = '.4s ease'; setTimeout(function(){el.remove();},400); }, 5000);
+    });
+})();
+</script>
+</body>
+</html>

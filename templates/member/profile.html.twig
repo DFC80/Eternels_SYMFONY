@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil — Les Éternels{% endblock %}
+
+{% block body %}
+
+<div style="padding:2.5rem 0 4rem;min-height:calc(100vh - 74px);">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                {# Header #}
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <a href="{{ path('app_member_dashboard') }}"
+                       class="d-inline-flex align-items-center gap-2 small fw-semibold"
+                       style="color:var(--text-muted);text-decoration:none;transition:color .2s;"
+                       onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">
+                        <i class="fas fa-arrow-left"></i> Mon espace
+                    </a>
+                </div>
+
+                {# Profile card #}
+                <div class="card-dark overflow-hidden">
+                    <div style="background:linear-gradient(135deg,rgba(230,55,87,.15) 0%,rgba(20,22,40,0) 70%);padding:2.5rem;border-bottom:1px solid var(--border);">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="avatar-initials" style="width:80px;height:80px;font-size:2rem;flex-shrink:0;">
+                                {{ user.firstName|first|upper }}
+                            </div>
+                            <div>
+                                <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.8rem;margin-bottom:.35rem;line-height:1.1;">
+                                    {{ user.firstName }} {{ user.lastName }}
+                                </h2>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge {{ user.isVerified ? 'badge-success' : 'badge-warning' }}">
+                                        <i class="fas fa-{{ user.isVerified ? 'circle-check' : 'clock' }} me-1"></i>
+                                        {{ user.isVerified ? 'Compte vérifié' : 'Vérification en attente' }}
+                                    </span>
+                                    <span class="badge badge-surface">
+                                        <i class="fas fa-calendar-plus me-1"></i>Membre depuis {{ user.createdAt|date('d/m/Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 p-md-5">
+                        <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:1.5rem;color:var(--text-primary);">
+                            <i class="fas fa-user me-2" style="color:var(--accent);"></i>Informations personnelles
+                        </h5>
+
+                        <div class="row g-4">
+                            {% for field in [
+                                {label:'Prénom',         icon:'user',        value: user.firstName},
+                                {label:'Nom',            icon:'user',        value: user.lastName},
+                                {label:'Email',          icon:'envelope',    value: user.email},
+                                {label:'Téléphone',      icon:'phone',       value: user.phone ?? '—'},
+                                {label:'Adresse',        icon:'location-dot',value: user.address ?? '—'},
+                            ] %}
+                                <div class="col-sm-6">
+                                    <div class="small fw-semibold mb-1" style="color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;font-size:.7rem;">
+                                        <i class="fas fa-{{ field.icon }} me-1" style="color:var(--accent);"></i>{{ field.label }}
+                                    </div>
+                                    <div style="color:var(--text-primary);font-weight:500;">{{ field.value }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);">
+                            <p class="small mb-0" style="color:var(--text-muted);">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Pour modifier vos informations, contactez un administrateur de l'association.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

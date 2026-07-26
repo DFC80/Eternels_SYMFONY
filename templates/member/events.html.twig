@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Événements — Mon Espace{% endblock %}
+
+{% block body %}
+
+<div style="padding:2.5rem 0 4rem;min-height:calc(100vh - 74px);">
+    <div class="container">
+
+        {# Header #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+            <div>
+                <p class="section-label mb-1">Espace membre</p>
+                <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.8rem;margin-bottom:.25rem;">
+                    Prochains <span style="color:var(--accent);">Événements</span>
+                </h2>
+                <p class="small mb-0" style="color:var(--text-muted);">Inscrivez-vous aux événements à venir</p>
+            </div>
+            <a href="{{ path('app_member_my_events') }}" class="btn btn-outline-accent">
+                <i class="fas fa-calendar-check me-2"></i>Mes inscriptions
+            </a>
+        </div>
+
+        {% if events is empty %}
+            <div class="card-dark text-center py-5">
+                <i class="fas fa-calendar-times fa-3x mb-3 d-block" style="color:var(--accent);opacity:.5;"></i>
+                <p style="color:var(--text-muted);margin:0;">Aucun événement à venir pour le moment. Revenez bientôt&nbsp;!</p>
+            </div>
+        {% else %}
+            <div class="row g-4">
+                {% for event in events %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card-dark h-100 d-flex flex-column">
+
+                            <div class="p-4 d-flex align-items-start gap-3" style="border-bottom:1px solid var(--border);">
+                                <div class="event-date-badge flex-shrink-0">
+                                    <div class="day">{{ event.startDate|date('d') }}</div>
+                                    <div class="month">{{ event.startDate|date('M') }}</div>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <h6 style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--text-primary);margin-bottom:.35rem;font-size:1.05rem;line-height:1.25;">
+                                        {{ event.title }}
+                                    </h6>
+                                    {% if event.location %}
+                                        <p class="small mb-1" style="color:var(--text-muted);">
+                                            <i class="fas fa-location-dot me-1" style="color:var(--accent);"></i>{{ event.location|slice(0,40) }}
+                                        </p>
+                                    {% endif %}
+                                    <p class="small mb-0" style="color:var(--text-muted);">
+                                        <i class="fas fa-clock me-1"></i>{{ event.startDate|date('H:i') }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {% if event.description %}
+                                <div class="px-4 pt-3">
+                                    <p class="small mb-0" style="color:var(--text-muted);line-height:1.6;">
+                                        {{ event.description|slice(0,110) }}{% if event.description|length > 110 %}…{% endif %}
+                                    </p>
+                                </div>
+                            {% endif %}
+
+                            <div class="p-3 mt-auto">
+                                <div class="d-flex gap-1 flex-wrap mb-3">
+                                    {% if event.activity %}
+                                        <span class="badge badge-surface">{{ event.activity.name }}</span>
+                                    {% endif %}
+                                    {% if event.price and event.price > 0 %}
+                                        <span class="badge badge-success">{{ event.price }}€</span>
+                                    {% else %}
+                                        <span class="badge badge-info">Gratuit</span>
+                                    {% endif %}
+                                    {% if event.maxParticipants %}
+                                        <span class="badge badge-surface">
+                                            <i class="fas fa-users me-1"></i>{{ event.participantCount }}/{{ event.maxParticipants }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <form method="post" action="{{ path('app_member_event_register', {id: event.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('event_' ~ event.id) }}">
+                                    <button type="submit" class="btn w-100 fw-semibold py-2
+                                        {{ event.hasAvailableSpots ? 'btn-accent' : '' }}"
+                                        style="{{ not event.hasAvailableSpots ? 'background:var(--bg-surface);border:1px solid var(--border);color:var(--text-muted);cursor:not-allowed;' : '' }}"
+                                        {{ not event.hasAvailableSpots ? 'disabled' : '' }}>
+                                        <i class="fas fa-{{ event.hasAvailableSpots ? 'user-plus' : 'ban' }} me-2"></i>
+                                        {{ event.hasAvailableSpots ? "S'inscrire" : 'Complet' }}
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

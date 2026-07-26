@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — Les Éternels{% endblock %}
+
+{% block body %}
+<div style="min-height:calc(100vh - 74px);display:flex;align-items:center;padding:3rem 0;
+            background:radial-gradient(ellipse 60% 50% at 20% 50%, rgba(230,55,87,.08) 0%, transparent 70%);">
+    <div class="container">
+        <div class="row align-items-center g-5 justify-content-center">
+
+            {# Branding panel #}
+            <div class="col-lg-5 d-none d-lg-block">
+                <p class="section-label mb-3">Rejoignez-nous</p>
+                <h1 style="font-family:'Rajdhani',sans-serif;font-size:3rem;font-weight:700;line-height:1.1;margin-bottom:1.25rem;">
+                    Créez votre<br>compte <span style="color:var(--accent);">membre</span>
+                </h1>
+                <p style="color:var(--text-muted);line-height:1.7;margin-bottom:2rem;">
+                    Accédez à l'espace membre, participez aux événements et rejoignez une communauté de passionnés de jeux.
+                </p>
+                <div class="d-flex flex-column gap-3">
+                    {% for item in [
+                        {icon:'shield-halved',    text:'Compte sécurisé et vérifié'},
+                        {icon:'gamepad',          text:'Accès à toutes les activités'},
+                        {icon:'calendar-check',   text:'Inscriptions aux événements'},
+                        {icon:'users',            text:'Communauté de passionnés'},
+                    ] %}
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width:36px;height:36px;border-radius:9px;background:rgba(230,55,87,.12);border:1px solid rgba(230,55,87,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fas fa-{{ item.icon }}" style="color:var(--accent);font-size:.85rem;"></i>
+                            </div>
+                            <span class="small" style="color:var(--text-muted);">{{ item.text }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Form panel #}
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <div class="card-dark p-4 p-md-5">
+                    <h4 style="font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:.35rem;">Créer un compte</h4>
+                    <p class="small mb-4" style="color:var(--text-muted);">Remplissez le formulaire pour rejoindre l'association</p>
+
+                    {{ form_start(form, {attr: {novalidate: 'novalidate', class: ''}}) }}
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-semibold" style="color:var(--text-muted);">Prénom</label>
+                            <div class="input-group input-group-dark">
+                                <span class="input-group-text"><i class="fas fa-user fa-sm"></i></span>
+                                {{ form_widget(form.firstName, {attr: {class: 'form-control form-control-dark', placeholder: 'Votre prénom'}}) }}
+                            </div>
+                            {{ form_errors(form.firstName) }}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-semibold" style="color:var(--text-muted);">Nom</label>
+                            <div class="input-group input-group-dark">
+                                <span class="input-group-text"><i class="fas fa-user fa-sm"></i></span>
+                                {{ form_widget(form.lastName, {attr: {class: 'form-control form-control-dark', placeholder: 'Votre nom'}}) }}
+                            </div>
+                            {{ form_errors(form.lastName) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold" style="color:var(--text-muted);">Adresse email</label>
+                        <div class="input-group input-group-dark">
+                            <span class="input-group-text"><i class="fas fa-envelope fa-sm"></i></span>
+                            {{ form_widget(form.email, {attr: {class: 'form-control form-control-dark', placeholder: 'votre@email.fr'}}) }}
+                        </div>
+                        {{ form_errors(form.email) }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold" style="color:var(--text-muted);">
+                            Téléphone <span style="color:var(--text-muted);font-weight:400;">(optionnel)</span>
+                        </label>
+                        <div class="input-group input-group-dark">
+                            <span class="input-group-text"><i class="fas fa-phone fa-sm"></i></span>
+                            {{ form_widget(form.phone, {attr: {class: 'form-control form-control-dark', placeholder: '06 XX XX XX XX'}}) }}
+                        </div>
+                        {{ form_errors(form.phone) }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold" style="color:var(--text-muted);">Mot de passe</label>
+                        <div class="input-group input-group-dark">
+                            <span class="input-group-text"><i class="fas fa-lock fa-sm"></i></span>
+                            {{ form_widget(form.plainPassword.first, {attr: {class: 'form-control form-control-dark', placeholder: 'Au moins 8 caractères'}}) }}
+                        </div>
+                        {{ form_errors(form.plainPassword.first) }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold" style="color:var(--text-muted);">Confirmer le mot de passe</label>
+                        <div class="input-group input-group-dark">
+                            <span class="input-group-text"><i class="fas fa-lock fa-sm"></i></span>
+                            {{ form_widget(form.plainPassword.second, {attr: {class: 'form-control form-control-dark', placeholder: 'Répétez votre mot de passe'}}) }}
+                        </div>
+                        {{ form_errors(form.plainPassword.second) }}
+                        {{ form_errors(form) }}
+                    </div>
+
+                    <button type="submit" class="btn btn-accent w-100 py-2 fw-semibold">
+                        <i class="fas fa-user-plus me-2"></i>Créer mon compte
+                    </button>
+
+                    {{ form_end(form) }}
+
+                    <div class="divider-text my-4">ou</div>
+
+                    <p class="text-center small mb-0" style="color:var(--text-muted);">
+                        Déjà membre ?
+                        <a href="{{ path('app_login') }}" style="color:var(--accent);text-decoration:none;font-weight:600;">
+                            Se connecter
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

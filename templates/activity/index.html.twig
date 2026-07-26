@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activités — Les Éternels{% endblock %}
+
+{% block body %}
+
+<div class="page-hero">
+    <div class="container text-center">
+        <span class="section-label mb-3 d-block">Ce que nous pratiquons</span>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:700;margin-bottom:1rem;">
+            Nos <span style="color:var(--accent);">Activités</span>
+        </h1>
+        <p style="color:var(--text-muted);font-size:1.05rem;max-width:480px;margin:0 auto;">
+            Découvrez toutes les activités de l'association et trouvez celle qui vous correspond.
+        </p>
+    </div>
+</div>
+
+<div style="padding:4rem 0;">
+    <div class="container">
+
+        {% set icons = {airsoft:'crosshairs', board_game:'chess', video_game:'gamepad', card_game:'layer-group', role_playing:'scroll'} %}
+        {% set typeLabels = {airsoft:'Airsoft', board_game:'Jeux de société', video_game:'Jeux vidéo', card_game:'Jeux de cartes', role_playing:'Jeu de rôle'} %}
+
+        {% if activities is empty %}
+            <div class="card-dark text-center py-5">
+                <i class="fas fa-gamepad fa-3x mb-3 d-block" style="color:var(--accent);opacity:.5;"></i>
+                <p style="color:var(--text-muted);margin:0;">Aucune activité disponible pour le moment.</p>
+            </div>
+        {% else %}
+            <div class="row g-4">
+                {% for activity in activities %}
+                    <div class="col-lg-4 col-md-6">
+                        <a href="{{ path('app_activity_show', {id: activity.id}) }}" class="text-decoration-none">
+                            <div class="card-dark h-100 p-4 d-flex flex-column" style="transition:transform .2s,box-shadow .2s;">
+                                <div class="d-flex align-items-start gap-3 mb-3">
+                                    <div class="activity-icon" style="flex-shrink:0;">
+                                        <i class="fas fa-{{ icons[activity.type] ?? 'star' }}"></i>
+                                    </div>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <h5 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.2rem;color:var(--text-primary);margin-bottom:.3rem;">
+                                            {{ activity.name }}
+                                        </h5>
+                                        <span class="badge badge-surface">{{ typeLabels[activity.type] ?? activity.type|replace({'_':' '}) }}</span>
+                                    </div>
+                                </div>
+
+                                {% if activity.description %}
+                                    <p class="small mb-3" style="color:var(--text-muted);line-height:1.6;flex-grow:1;">
+                                        {{ activity.description|slice(0,140) }}{% if activity.description|length > 140 %}…{% endif %}
+                                    </p>
+                                {% else %}
+                                    <div class="flex-grow-1"></div>
+                                {% endif %}
+
+                                <div class="d-flex align-items-center justify-content-between mt-auto pt-3"
+                                     style="border-top:1px solid var(--border);">
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="badge badge-surface">
+                                            <i class="fas fa-dice me-1" style="color:var(--accent);"></i>{{ activity.games|length }} jeux
+                                        </span>
+                                        <span class="badge badge-surface">
+                                            <i class="fas fa-calendar me-1" style="color:var(--accent);"></i>{{ activity.events|length }} évén.
+                                        </span>
+                                    </div>
+                                    <span style="color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.03em;">
+                                        Découvrir <i class="fas fa-arrow-right ms-1"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
