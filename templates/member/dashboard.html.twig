@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Espace - Les Eternels{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="container">
+        <!-- Welcome Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                    <div class="card-body p-4 text-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 60px; height: 60px; background-color: #e94560; font-size: 1.5rem; font-weight: bold;">
+                                {{ app.user.firstName|first|upper }}
+                            </div>
+                            <div>
+                                <h4 class="mb-0">Bonjour, {{ app.user.firstName }} !</h4>
+                                <p class="mb-0 text-muted">{{ app.user.email }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="text-danger fs-1"><i class="fas fa-id-card"></i></div>
+                    <h4 class="fw-bold">{{ memberships|length }}</h4>
+                    <small class="text-muted">Adhesions</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="text-success fs-1"><i class="fas fa-euro-sign"></i></div>
+                    <h4 class="fw-bold">{{ subscriptions|length }}</h4>
+                    <small class="text-muted">Cotisations</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="text-primary fs-1"><i class="fas fa-calendar-check"></i></div>
+                    <h4 class="fw-bold">{{ upcoming_events|length }}</h4>
+                    <small class="text-muted">Evenements a venir</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="text-warning fs-1"><i class="fas fa-shopping-cart"></i></div>
+                    <h4 class="fw-bold">{{ recent_consumptions|length }}</h4>
+                    <small class="text-muted">Consommations recentes</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Memberships -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 pt-3">
+                        <h5 class="mb-0"><i class="fas fa-id-card me-2 text-danger"></i>Mes Adhesions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if memberships is empty %}
+                            <p class="text-muted text-center py-3">Aucune adhesion enregistree.</p>
+                        {% else %}
+                            <div class="list-group list-group-flush">
+                                {% for membership in memberships %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>{{ membership.activity.name }}</strong>
+                                                <br><small class="text-muted">Depuis le {{ membership.startDate|date('d/m/Y') }}</small>
+                                            </div>
+                                            <span class="badge {{ membership.status == 'active' ? 'bg-success' : (membership.status == 'expired' ? 'bg-warning' : 'bg-danger') }}">
+                                                {{ membership.status == 'active' ? 'Actif' : (membership.status == 'expired' ? 'Expire' : 'Annule') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt me-2 text-primary"></i>Prochains Evenements</h5>
+                        <a href="{{ path('app_member_events') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                    </div>
+                    <div class="card-body">
+                        {% if upcoming_events is empty %}
+                            <p class="text-muted text-center py-3">Aucun evenement a venir.</p>
+                        {% else %}
+                            <div class="list-group list-group-flush">
+                                {% for event in upcoming_events %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <strong>{{ event.title }}</strong>
+                                                <br><small class="text-muted"><i class="fas fa-calendar me-1"></i>{{ event.startDate|date('d/m/Y H:i') }}</small>
+                                                {% if event.location %}
+                                                    <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ event.location }}</small>
+                                                {% endif %}
+                                            </div>
+                                            <form method="post" action="{{ path('app_member_event_register', {id: event.id}) }}" class="ms-2">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('event_' ~ event.id) }}">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Subscriptions -->
+            {% if subscriptions is not empty %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 pt-3">
+                        <h5 class="mb-0"><i class="fas fa-euro-sign me-2 text-success"></i>Dernieres Cotisations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            {% for sub in subscriptions %}
+                                <div class="list-group-item border-0 px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ sub.rate.label }}</strong>
+                                            <br><small class="text-muted">{{ sub.paymentDate|date('d/m/Y') }}</small>
+                                        </div>
+                                        <span class="badge bg-success">{{ sub.amountPaid }}€</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Consumptions -->
+            {% if recent_consumptions is not empty %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 pt-3">
+                        <h5 class="mb-0"><i class="fas fa-beer me-2 text-warning"></i>Consommations Recentes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            {% for conso in recent_consumptions %}
+                                <div class="list-group-item border-0 px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ conso.item ? conso.item.name : 'Article' }}</strong>
+                                            <br><small class="text-muted">x{{ conso.quantity }} - {{ conso.consumedAt|date('d/m/Y') }}</small>
+                                        </div>
+                                        <span class="badge bg-warning text-dark">{{ conso.totalPrice }}€</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

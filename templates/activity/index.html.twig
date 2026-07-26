@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activites - Les Eternels{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold"><i class="fas fa-gamepad me-2 text-danger"></i>Nos Activites</h1>
+        <p class="text-muted lead">Decouvrez toutes les activites de l'association</p>
+    </div>
+
+    {% if activities is empty %}
+        <div class="alert alert-info text-center">Aucune activite disponible pour le moment.</div>
+    {% else %}
+        <div class="row g-4">
+            {% for activity in activities %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm h-100 card-hover">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                {% if activity.type == 'airsoft' %}
+                                    <i class="fas fa-crosshairs fa-3x text-danger"></i>
+                                {% elseif activity.type == 'board_game' %}
+                                    <i class="fas fa-chess fa-3x text-danger"></i>
+                                {% elseif activity.type == 'video_game' %}
+                                    <i class="fas fa-gamepad fa-3x text-danger"></i>
+                                {% elseif activity.type == 'card_game' %}
+                                    <i class="fas fa-layer-group fa-3x text-danger"></i>
+                                {% else %}
+                                    <i class="fas fa-star fa-3x text-danger"></i>
+                                {% endif %}
+                            </div>
+                            <h5 class="fw-bold">{{ activity.name }}</h5>
+                            <span class="badge bg-secondary mb-2">{{ activity.type|replace({'_': ' '}) }}</span>
+                            {% if activity.description %}
+                                <p class="text-muted small">{{ activity.description|slice(0, 120) }}{% if activity.description|length > 120 %}...{% endif %}</p>
+                            {% endif %}
+                            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                <span class="badge bg-light text-dark">{{ activity.games|length }} jeux</span>
+                                <span class="badge bg-light text-dark">{{ activity.events|length }} evenements</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3 text-center">
+                            <a href="{{ path('app_activity_show', {id: activity.id}) }}" class="btn btn-outline-danger btn-sm">
+                                Decouvrir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

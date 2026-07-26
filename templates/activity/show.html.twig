@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ activity.name }} - Les Eternels{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <a href="{{ path('app_activities') }}" class="btn btn-outline-secondary mb-4">
+        <i class="fas fa-arrow-left me-1"></i>Retour aux activites
+    </a>
+
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header py-4" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                    <div class="text-center text-white">
+                        {% if activity.type == 'airsoft' %}
+                            <i class="fas fa-crosshairs fa-3x mb-2" style="color: #e94560;"></i>
+                        {% elseif activity.type == 'board_game' %}
+                            <i class="fas fa-chess fa-3x mb-2" style="color: #e94560;"></i>
+                        {% else %}
+                            <i class="fas fa-gamepad fa-3x mb-2" style="color: #e94560;"></i>
+                        {% endif %}
+                        <h2 class="mb-0">{{ activity.name }}</h2>
+                        <span class="badge bg-secondary mt-1">{{ activity.type|replace({'_': ' '})|capitalize }}</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    {% if activity.description %}
+                        <h5>Description</h5>
+                        <p class="text-muted">{{ activity.description }}</p>
+                    {% endif %}
+
+                    {% if activity.games is not empty %}
+                        <hr>
+                        <h5><i class="fas fa-dice me-2 text-danger"></i>Jeux disponibles ({{ activity.games|length }})</h5>
+                        <div class="row g-2">
+                            {% for game in activity.games %}
+                                {% if game.isAvailable %}
+                                    <div class="col-md-6">
+                                        <div class="card border">
+                                            <div class="card-body p-3">
+                                                <h6 class="mb-1">{{ game.name }}</h6>
+                                                <div class="d-flex gap-1 flex-wrap">
+                                                    {% if game.minPlayers %}
+                                                        <small class="text-muted"><i class="fas fa-users me-1"></i>{{ game.minPlayers }}{% if game.maxPlayers %}-{{ game.maxPlayers }}{% endif %} joueurs</small>
+                                                    {% endif %}
+                                                    {% if game.difficulty %}
+                                                        <span class="badge bg-secondary ms-auto">{{ game.difficulty }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if activity.photos is not empty %}
+                        <hr>
+                        <h5><i class="fas fa-images me-2 text-danger"></i>Photos</h5>
+                        <div class="row g-2">
+                            {% for photo in activity.photos %}
+                                {% if photo.isPublic %}
+                                    <div class="col-4">
+                                        <div class="bg-light rounded" style="height: 100px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-image fa-2x text-muted"></i>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5><i class="fas fa-chart-bar me-2 text-danger"></i>En chiffres</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-calendar me-2 text-muted"></i><strong>{{ activity.events|length }}</strong> evenements</li>
+                        <li class="mb-2"><i class="fas fa-dice me-2 text-muted"></i><strong>{{ activity.games|length }}</strong> jeux</li>
+                        <li class="mb-2"><i class="fas fa-images me-2 text-muted"></i><strong>{{ activity.photos|length }}</strong> photos</li>
+                        <li class="mb-2"><i class="fas fa-users me-2 text-muted"></i><strong>{{ activity.memberships|length }}</strong> membres</li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if activity.events is not empty %}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5><i class="fas fa-calendar-alt me-2 text-danger"></i>Prochains evenements</h5>
+                        {% for event in activity.events %}
+                            {% if event.startDate > date() %}
+                                <div class="mb-2">
+                                    <strong class="small">{{ event.title }}</strong>
+                                    <br><small class="text-muted">{{ event.startDate|date('d/m/Y') }}</small>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

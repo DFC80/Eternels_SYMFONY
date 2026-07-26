@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Les Eternels{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-user-plus me-2" style="color: #e94560;"></i>Creer un compte
+                    </h4>
+                    <p class="text-muted mb-0 small">Rejoignez l'association Les Eternels</p>
+                </div>
+                <div class="card-body p-4">
+                    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.firstName) }}
+                            {{ form_widget(form.firstName) }}
+                            {{ form_errors(form.firstName) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.lastName) }}
+                            {{ form_widget(form.lastName) }}
+                            {{ form_errors(form.lastName) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.phone) }}
+                        {{ form_widget(form.phone) }}
+                        {{ form_errors(form.phone) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.plainPassword.first) }}
+                        {{ form_widget(form.plainPassword.first) }}
+                        {{ form_errors(form.plainPassword.first) }}
+                        <small class="text-muted">Au moins 8 caracteres</small>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.plainPassword.second) }}
+                        {{ form_widget(form.plainPassword.second) }}
+                        {{ form_errors(form.plainPassword.second) }}
+                    </div>
+
+                    <button type="submit" class="btn w-100 py-2" style="background-color: #e94560; color: white;">
+                        <i class="fas fa-user-plus me-2"></i>Creer mon compte
+                    </button>
+
+                    {{ form_end(form) }}
+
+                    <hr>
+                    <div class="text-center">
+                        <p class="mb-0">Deja membre ?
+                            <a href="{{ path('app_login') }}" style="color: #e94560;">Se connecter</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

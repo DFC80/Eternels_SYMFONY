@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les Eternels - Association de Jeux{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 500px; display: flex; align-items: center;">
+    <div class="container text-center text-white">
+        <h1 class="display-3 fw-bold mb-3">
+            <span style="color: #e94560;">Les Eternels</span>
+        </h1>
+        <p class="lead mb-4 fs-4">Association passionnee de jeux - Airsoft, Jeux de plateau, Jeux video et plus encore</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{{ path('app_activities') }}" class="btn btn-danger btn-lg px-4">
+                <i class="fas fa-gamepad me-2"></i>Nos activites
+            </a>
+            <a href="{{ path('app_events') }}" class="btn btn-outline-light btn-lg px-4">
+                <i class="fas fa-calendar-alt me-2"></i>Evenements
+            </a>
+            {% if not app.user %}
+                <a href="{{ path('app_register') }}" class="btn btn-success btn-lg px-4">
+                    <i class="fas fa-user-plus me-2"></i>Nous rejoindre
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Banner -->
+<section class="py-4" style="background-color: #e94560;">
+    <div class="container">
+        <div class="row text-white text-center">
+            <div class="col-md-4">
+                <h2 class="fw-bold mb-0">{{ activities|length }}</h2>
+                <small>Activites proposees</small>
+            </div>
+            <div class="col-md-4">
+                <h2 class="fw-bold mb-0">{{ upcoming_events|length }}</h2>
+                <small>Evenements a venir</small>
+            </div>
+            <div class="col-md-4">
+                <h2 class="fw-bold mb-0">2024</h2>
+                <small>Annee de fondation</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Activities Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Nos Activites</h2>
+            <p class="text-muted">Decouvrez toutes les activites proposees par notre association</p>
+        </div>
+
+        {% if activities is empty %}
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>Aucune activite disponible pour le moment.
+            </div>
+        {% else %}
+            <div class="row g-4">
+                {% for activity in activities %}
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card h-100 border-0 shadow-sm card-hover" style="transition: all 0.3s ease;">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    {% if activity.type == 'airsoft' %}
+                                        <i class="fas fa-crosshairs fa-3x" style="color: #e94560;"></i>
+                                    {% elseif activity.type == 'board_game' %}
+                                        <i class="fas fa-chess fa-3x" style="color: #e94560;"></i>
+                                    {% elseif activity.type == 'video_game' %}
+                                        <i class="fas fa-gamepad fa-3x" style="color: #e94560;"></i>
+                                    {% elseif activity.type == 'card_game' %}
+                                        <i class="fas fa-cards fa-3x" style="color: #e94560;"></i>
+                                    {% else %}
+                                        <i class="fas fa-star fa-3x" style="color: #e94560;"></i>
+                                    {% endif %}
+                                </div>
+                                <h5 class="card-title fw-bold">{{ activity.name }}</h5>
+                                {% if activity.description %}
+                                    <p class="card-text text-muted small">{{ activity.description|slice(0, 100) }}{% if activity.description|length > 100 %}...{% endif %}</p>
+                                {% endif %}
+                                <a href="{{ path('app_activity_show', {id: activity.id}) }}" class="btn btn-outline-danger btn-sm mt-2">
+                                    En savoir plus
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Upcoming Events Section -->
+{% if upcoming_events is not empty %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Prochains Evenements</h2>
+            <p class="text-muted">Ne ratez pas nos prochaines rencontres</p>
+        </div>
+
+        <div class="row g-4">
+            {% for event in upcoming_events %}
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm card-hover" style="transition: all 0.3s ease;">
+                        <div class="card-header py-3" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                            <div class="text-center text-white">
+                                <div class="fw-bold fs-4">{{ event.startDate|date('d') }}</div>
+                                <div class="text-uppercase small" style="color: #e94560;">{{ event.startDate|date('M Y') }}</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold">{{ event.title }}</h6>
+                            {% if event.location %}
+                                <p class="card-text small text-muted">
+                                    <i class="fas fa-map-marker-alt me-1 text-danger"></i>{{ event.location }}
+                                </p>
+                            {% endif %}
+                            {% if event.activity %}
+                                <span class="badge bg-secondary">{{ event.activity.name }}</span>
+                            {% endif %}
+                            {% if event.price %}
+                                <span class="badge bg-success ms-1">{{ event.price }}€</span>
+                            {% else %}
+                                <span class="badge bg-info ms-1">Gratuit</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <a href="{{ path('app_event_show', {id: event.id}) }}" class="btn btn-outline-danger btn-sm w-100">
+                                Voir l'evenement
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ path('app_events') }}" class="btn btn-danger">
+                <i class="fas fa-calendar-alt me-2"></i>Tous les evenements
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+    <div class="container text-center text-white">
+        <h2 class="fw-bold mb-3">Rejoignez-nous !</h2>
+        <p class="mb-4">Devenez membre de l'association et profitez de tous nos avantages</p>
+        {% if not app.user %}
+            <a href="{{ path('app_register') }}" class="btn btn-danger btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Creer mon compte
+            </a>
+        {% else %}
+            <a href="{{ path('app_member_dashboard') }}" class="btn btn-danger btn-lg">
+                <i class="fas fa-tachometer-alt me-2"></i>Mon espace membre
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+twig:
+    file_name_pattern: '*.html.twig'
+    globals:
+        association_name: '%env(ASSOCIATION_NAME)%'
+        association_email: '%env(ASSOCIATION_EMAIL)%'
+
+when@test:
+    twig:
+        strict_variables: true

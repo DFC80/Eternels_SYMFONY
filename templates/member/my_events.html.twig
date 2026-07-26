@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Evenements - Les Eternels{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold"><i class="fas fa-calendar-check me-2 text-danger"></i>Mes Inscriptions</h2>
+                <p class="text-muted">Historique de vos participations aux evenements</p>
+            </div>
+            <a href="{{ path('app_member_events') }}" class="btn btn-outline-danger">
+                <i class="fas fa-plus me-1"></i>Voir les evenements
+            </a>
+        </div>
+    </div>
+
+    {% if participations is empty %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>Vous n'etes inscrit a aucun evenement.
+            <a href="{{ path('app_member_events') }}" class="alert-link">Voir les evenements disponibles</a>
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Evenement</th>
+                                <th>Date evenement</th>
+                                <th>Inscrit le</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for participation in participations %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ participation.event.title }}</strong>
+                                        {% if participation.event.location %}
+                                            <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ participation.event.location }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ participation.event.startDate|date('d/m/Y H:i') }}</td>
+                                    <td>{{ participation.registeredAt|date('d/m/Y') }}</td>
+                                    <td>
+                                        <span class="badge {{ participation.status == 'registered' ? 'bg-primary' : (participation.status == 'confirmed' ? 'bg-success' : (participation.status == 'attended' ? 'bg-info' : 'bg-danger')) }}">
+                                            {{ participation.status == 'registered' ? 'Inscrit' : (participation.status == 'confirmed' ? 'Confirme' : (participation.status == 'attended' ? 'Participe' : 'Annule')) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if participation.status != 'cancelled' and participation.event.startDate > date() %}
+                                            <form method="post" action="{{ path('app_member_event_cancel', {id: participation.event.id}) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Annuler cette inscription ?')">
+                                                    <i class="fas fa-times me-1"></i>Annuler
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

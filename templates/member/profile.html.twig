@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil - Les Eternels{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-header py-3" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                    <h5 class="text-white mb-0"><i class="fas fa-user-edit me-2" style="color: #e94560;"></i>Mon Profil</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-4">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                                 style="width: 80px; height: 80px; background-color: #e94560; font-size: 2rem; color: white; font-weight: bold;">
+                                {{ user.firstName|first|upper }}
+                            </div>
+                            <h6 class="fw-bold">{{ user.fullName }}</h6>
+                            <span class="badge {{ user.isVerified ? 'bg-success' : 'bg-warning' }}">
+                                {{ user.isVerified ? 'Compte verifie' : 'Non verifie' }}
+                            </span>
+                        </div>
+                        <div class="col-md-9">
+                            <table class="table">
+                                <tr>
+                                    <th class="text-muted" width="35%">Prenom</th>
+                                    <td>{{ user.firstName }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">Nom</th>
+                                    <td>{{ user.lastName }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">Email</th>
+                                    <td>{{ user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">Telephone</th>
+                                    <td>{{ user.phone ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">Adresse</th>
+                                    <td>{{ user.address ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-muted">Membre depuis</th>
+                                    <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ path('app_member_dashboard') }}" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-arrow-left me-2"></i>Retour
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
