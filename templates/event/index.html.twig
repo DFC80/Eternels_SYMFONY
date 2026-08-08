@@ -39,6 +39,9 @@
                                 <div class="flex-grow-1 min-w-0">
                                     <h6 style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--text-primary);margin-bottom:.35rem;font-size:1.05rem;line-height:1.25;">
                                         {{ event.title }}
+                                        {% if event.bureauOnly %}
+                                            <span class="badge badge-warning ms-1 small" title="Réservé aux membres du bureau">🔒 Bureau</span>
+                                        {% endif %}
                                     </h6>
                                     {% if event.location %}
                                         <p class="small mb-1" style="color:var(--text-muted);">

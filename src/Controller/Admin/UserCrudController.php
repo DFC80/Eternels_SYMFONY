@@ -28,7 +28,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('phone', 'Telephone')->hideOnIndex(),
             TextField::new('address', 'Adresse')->hideOnIndex(),
             ChoiceField::new('roles', 'Roles')
-                ->setChoices(['Admin' => 'ROLE_ADMIN', 'Utilisateur' => 'ROLE_USER'])
+                ->setChoices(['Admin' => 'ROLE_ADMIN', 'Bureau' => 'ROLE_BUREAU', 'Utilisateur' => 'ROLE_USER'])
                 ->allowMultipleChoices()
                 ->renderAsBadges(),
             BooleanField::new('isVerified', 'Compte verifie'),

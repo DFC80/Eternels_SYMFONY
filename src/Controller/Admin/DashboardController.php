@@ -8,6 +8,7 @@ use App\Entity\Equipment;
 use App\Entity\Event;
 use App\Entity\Game;
 use App\Entity\Meal;
+use App\Entity\Meeting;
 use App\Entity\Membership;
 use App\Entity\Photo;
 use App\Entity\Subscription;
@@ -68,6 +69,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Evenements');
         yield MenuItem::linkToCrud('Evenements', 'fas fa-calendar-alt', Event::class);
+        yield MenuItem::linkToCrud('Reunions & AG', 'fas fa-people-roof', Meeting::class);
         yield MenuItem::linkToCrud('Repas (Airsoft)', 'fas fa-utensils', Meal::class);
 
         yield MenuItem::section('Equipements & Consommations');

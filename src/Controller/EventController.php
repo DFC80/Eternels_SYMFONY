@@ -13,8 +13,11 @@ class EventController extends AbstractController
     #[Route('/', name: 'app_events')]
     public function index(EventRepository $eventRepo): Response
     {
+        $isBureau = $this->isGranted('ROLE_BUREAU') || $this->isGranted('ROLE_ADMIN');
+
         return $this->render('event/index.html.twig', [
-            'events' => $eventRepo->findUpcomingEvents(20),
+            'events' => $eventRepo->findUpcomingEvents(20, $isBureau),
+            'isBureau' => $isBureau,
         ]);
     }
 

@@ -16,27 +16,35 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function findUpcomingEvents(int $limit = 10): array
+    public function findUpcomingEvents(int $limit = 10, bool $includeBureauOnly = false): array
     {
-        return $this->createQueryBuilder('e')
+        $qb = $this->createQueryBuilder('e')
             ->andWhere('e.startDate >= :now')
             ->andWhere('e.status != :cancelled')
             ->setParameter('now', new \DateTime())
             ->setParameter('cancelled', 'cancelled')
             ->orderBy('e.startDate', 'ASC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+
+        if (!$includeBureauOnly) {
+            $qb->andWhere('e.bureauOnly = false');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
-    public function findPastEvents(int $limit = 10): array
+    public function findPastEvents(int $limit = 10, bool $includeBureauOnly = false): array
     {
-        return $this->createQueryBuilder('e')
+        $qb = $this->createQueryBuilder('e')
             ->andWhere('e.startDate < :now')
             ->setParameter('now', new \DateTime())
             ->orderBy('e.startDate', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+
+        if (!$includeBureauOnly) {
+            $qb->andWhere('e.bureauOnly = false');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

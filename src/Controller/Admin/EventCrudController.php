@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Event;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -47,6 +48,8 @@ class EventCrudController extends AbstractCrudController
                     'cancelled' => 'danger',
                 ]),
             TextareaField::new('description', 'Description')->hideOnIndex(),
+            BooleanField::new('bureauOnly', 'Bureau uniquement')
+                ->setHelp('Si coché, cet événement n\'est visible que par les membres du bureau'),
         ];
     }
 }
