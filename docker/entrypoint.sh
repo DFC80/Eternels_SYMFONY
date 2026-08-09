@@ -9,6 +9,10 @@ echo "MySQL ready."
 
 php bin/console doctrine:database:create --if-not-exists --no-interaction
 php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console cache:clear --no-warmup --no-interaction
 php bin/console doctrine:fixtures:load --no-interaction
+
+# Re-own all var/ files as www-data so Apache can write cache/logs
+chown -R www-data:www-data var/
 
 exec "$@"

@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'annonce — Brocante — Les Éternels{% endblock %}
+
+{% block body %}
+
+<div class="page-hero">
+    <div class="container">
+        <span class="section-label">Brocante Airsoft</span>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:700;margin-bottom:.25rem;">
+            <i class="fas fa-pen me-2 text-accent"></i>Modifier l'annonce
+        </h1>
+    </div>
+</div>
+
+<div style="padding:3rem 0 5rem;">
+<div class="container" style="max-width:640px;">
+    <div class="card-dark p-4 p-md-5">
+
+        {# Existing photos #}
+        {% if listing.photos and listing.photos|length > 0 %}
+            <div class="mb-4">
+                <p class="small fw-semibold mb-2" style="color:var(--text-muted);">Photos actuelles</p>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for i, photo in listing.photos %}
+                        <div style="position:relative;">
+                            <img src="{{ photo }}" alt="Photo {{ i + 1 }}"
+                                 style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
+                            <form method="post"
+                                  action="{{ path('app_market_photo_delete', {id: listing.id, idx: i}) }}"
+                                  style="position:absolute;top:-6px;right:-6px;"
+                                  onsubmit="return confirm('Supprimer cette photo ?');">
+                                <input type="hidden" name="_token"
+                                       value="{{ csrf_token('del_photo_' ~ listing.id ~ '_' ~ i) }}">
+                                <button type="submit"
+                                        style="width:20px;height:20px;border-radius:50%;background:#f87171;border:none;color:#fff;font-size:.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;">
+                                    ×
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {{ form_start(form, {attr: {enctype: 'multipart/form-data', novalidate: 'novalidate'}}) }}
+            {{ include('market/_form_fields.html.twig') }}
+            <div class="d-flex gap-3 mt-4">
+                <a href="{{ path('app_market_index') }}" class="btn flex-grow-1"
+                   style="background:var(--bg-surface);border:1px solid var(--border);color:var(--text-muted);">
+                    Annuler
+                </a>
+                <button type="submit" class="btn btn-accent flex-grow-1">
+                    <i class="fas fa-floppy-disk me-2"></i>Enregistrer
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+</div>
+
+{% endblock %}

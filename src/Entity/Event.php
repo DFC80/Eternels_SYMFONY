@@ -42,6 +42,9 @@ class Event
     #[ORM\Column(length: 30)]
     private ?string $status = 'planned'; // planned, open, ongoing, completed, cancelled
 
+    #[ORM\Column]
+    private bool $bureauOnly = false;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $coverImage = null;
 
@@ -162,6 +165,17 @@ class Event
     public function setStatus(string $status): static
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function isBureauOnly(): bool
+    {
+        return $this->bureauOnly;
+    }
+
+    public function setBureauOnly(bool $bureauOnly): static
+    {
+        $this->bureauOnly = $bureauOnly;
         return $this;
     }
 
