@@ -1,0 +1,38 @@
+{# Shared form fields for new / edit listing forms #}
+
+<div class="row g-3">
+    <div class="col-sm-6">
+        <label class="form-label small fw-semibold" style="color:var(--text-muted);">Type d'annonce *</label>
+        {{ form_widget(form.type) }}
+        {{ form_errors(form.type) }}
+    </div>
+    <div class="col-sm-6">
+        <label class="form-label small fw-semibold" style="color:var(--text-muted);">Catégorie</label>
+        {{ form_widget(form.category) }}
+        {{ form_errors(form.category) }}
+    </div>
+    <div class="col-12">
+        <label class="form-label small fw-semibold" style="color:var(--text-muted);">Titre *</label>
+        {{ form_widget(form.title) }}
+        {{ form_errors(form.title) }}
+    </div>
+    <div class="col-12">
+        <label class="form-label small fw-semibold" style="color:var(--text-muted);">Description *</label>
+        {{ form_widget(form.description) }}
+        {{ form_errors(form.description) }}
+    </div>
+    <div class="col-sm-6">
+        <label class="form-label small fw-semibold" style="color:var(--text-muted);">
+            Prix (€) <span style="color:var(--text-muted);font-weight:400;">— optionnel</span>
+        </label>
+        {{ form_widget(form.price) }}
+        {{ form_errors(form.price) }}
+    </div>
+    <div class="col-12">
+        <label class="form-label small fw-semibold" style="color:var(--text-muted);">
+            Photos <span style="color:var(--text-muted);font-weight:400;">— optionnel, max 5 Mo/image</span>
+        </label>
+        {{ form_widget(form.photoFiles) }}
+        {{ form_errors(form.photoFiles) }}
+    </div>
+</div>

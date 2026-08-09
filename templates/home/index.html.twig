@@ -179,6 +179,101 @@
 </section>
 {% endif %}
 
+{# ── Brocante widget (members only) ────────────────────────────── #}
+{% if app.user and market_form is not null %}
+<section style="padding:5rem 0;">
+    <div class="container">
+        <div class="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-5">
+            <div class="text-center text-md-start">
+                <span class="section-label">Espace membres</span>
+                <h2 class="section-title">Brocante Airsoft</h2>
+                <div class="section-divider" style="margin:0.75rem 0 0;"></div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-accent btn-sm px-3" data-bs-toggle="modal" data-bs-target="#modalHomeMarket">
+                    <i class="fas fa-plus me-1"></i>Déposer une annonce
+                </button>
+                <a href="{{ path('app_market_index') }}" class="btn btn-outline-accent btn-sm px-3">
+                    Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        {% if recent_listings is not empty %}
+            <div class="row g-4">
+                {% set typeColors = {VENTE:'var(--accent)', ECHANGE:'#60a5fa', RECHERCHE:'#4ade80'} %}
+                {% set typeLabels = {VENTE:'Vente', ECHANGE:'Échange', RECHERCHE:'Recherche'} %}
+                {% for listing in recent_listings %}
+                    <div class="col-md-4">
+                        <a href="{{ path('app_market_show', {id: listing.id}) }}" class="text-decoration-none">
+                            <div class="card-dark h-100 d-flex flex-column">
+                                {% if listing.photos and listing.photos[0] %}
+                                    <img src="{{ listing.photos[0] }}" alt="{{ listing.title }}"
+                                         style="width:100%;height:140px;object-fit:cover;border-radius:14px 14px 0 0;">
+                                {% else %}
+                                    <div style="height:60px;background:var(--bg-surface);border-radius:14px 14px 0 0;"></div>
+                                {% endif %}
+                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <span class="badge" style="background:{{ typeColors[listing.type] ?? 'var(--accent)' }};color:#fff;font-size:.65rem;">
+                                            {{ typeLabels[listing.type] ?? listing.type }}
+                                        </span>
+                                    </div>
+                                    <h6 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;color:var(--text-primary);margin-bottom:.3rem;">
+                                        {{ listing.title|slice(0, 60) }}
+                                    </h6>
+                                    {% if listing.price %}
+                                        <p class="mb-1" style="color:var(--accent);font-weight:700;">
+                                            {{ listing.price|number_format(2, ',', ' ') }} €
+                                        </p>
+                                    {% endif %}
+                                    <p class="small mb-0 mt-auto" style="color:var(--text-muted);">
+                                        <i class="fas fa-user-circle me-1"></i>{{ listing.seller.firstName }} {{ listing.seller.lastName|first }}.
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card-dark text-center py-5" style="color:var(--text-muted);">
+                <i class="fas fa-tags fa-2x mb-3 d-block" style="color:var(--border);"></i>
+                <p class="mb-3">Aucune annonce pour le moment.</p>
+                <button class="btn btn-accent btn-sm" data-bs-toggle="modal" data-bs-target="#modalHomeMarket">
+                    <i class="fas fa-plus me-2"></i>Soyez le premier à publier !
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{# ── Modal brocante (homepage) ─────────────────────────────────── #}
+<div class="modal fade" id="modalHomeMarket" tabindex="-1" aria-labelledby="modalHomeMarketLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border);">
+            <div class="modal-header" style="border-color:var(--border);">
+                <h5 class="modal-title" id="modalHomeMarketLabel" style="font-family:'Rajdhani',sans-serif;font-weight:700;">
+                    <i class="fas fa-tags me-2 text-accent"></i>Déposer une annonce — Brocante
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(market_form, {attr: {enctype: 'multipart/form-data', novalidate: 'novalidate'}}) }}
+                    <input type="hidden" name="_from" value="home">
+                    {{ include('market/_form_fields.html.twig', {form: market_form}) }}
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-accent btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Publier l'annonce
+                        </button>
+                    </div>
+                {{ form_end(market_form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {# ── Features ──────────────────────────────────────────────────── #}
 <section style="padding:5rem 0;">
     <div class="container">

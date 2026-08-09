@@ -68,12 +68,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Consumption::class)]
     private Collection $consumptions;
 
+    #[ORM\OneToMany(mappedBy: 'seller', targetEntity: MarketListing::class, orphanRemoval: true)]
+    private Collection $marketListings;
+
     public function __construct()
     {
         $this->memberships = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->eventParticipations = new ArrayCollection();
         $this->consumptions = new ArrayCollection();
+        $this->marketListings = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -248,6 +252,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getConsumptions(): Collection
     {
         return $this->consumptions;
+    }
+
+    public function getMarketListings(): Collection
+    {
+        return $this->marketListings;
     }
 
     public function __toString(): string
